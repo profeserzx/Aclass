@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dawamu School - Online Payments</title>
+    <title>Dawamu School - Payments</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
@@ -18,26 +18,19 @@
         .logo { display: flex; align-items: center; gap: 15px; }
         .logo img { height: 50px; }
         .logo h1 { color: #8DB600; }
-        .back-btn {
-            background: #8DB600;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .card {
             background: white;
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .card h2 { color: #8DB600; margin-bottom: 20px; }
+        .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 25px;
         }
@@ -50,45 +43,33 @@
         }
         .stat-card h3 { color: #666; font-size: 14px; }
         .stat-card .number { font-size: 28px; font-weight: bold; color: #8DB600; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-        }
-        .btn-submit {
-            background: #8DB600;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .btn-mpesa {
-            background: #2D9B4E;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: #8DB600; color: white; }
-        .paid { color: #4caf50; font-weight: bold; }
-        .pending { color: #f44336; font-weight: bold; }
+        .status-paid { color: #4caf50; font-weight: bold; }
+        .status-pending { color: #f44336; font-weight: bold; }
         .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
-        .mpesa-prompt {
-            background: #F0F5E6;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px dashed #8DB600;
-            text-align: center;
+        .btn-refresh {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            float: right;
         }
-        .mpesa-prompt img { height: 40px; vertical-align: middle; }
+        .btn-refresh:hover { background: #6B8E00; }
+        .payment-method-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .method-mpesa { background: #4caf50; color: white; }
+        .method-bank { background: #2196f3; color: white; }
+        .method-cash { background: #ff9800; color: white; }
+        .refreshing { opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -99,77 +80,120 @@
     
     <div class="container">
         <div class="stats-grid">
-            <div class="stat-card"><h3>Total Collected</h3><div class="number" id="totalCollected">KSh 450,000</div></div>
-            <div class="stat-card"><h3>Pending Payments</h3><div class="number" id="totalPending">KSh 120,000</div></div>
-            <div class="stat-card"><h3>M-Pesa Payments</h3><div class="number" id="mpesaPayments">28</div></div>
+            <div class="stat-card"><h3>Total Collected</h3><div class="number" id="totalCollected">KSh 0</div></div>
+            <div class="stat-card"><h3>Pending Payments</h3><div class="number" id="pendingPayments">KSh 0</div></div>
+            <div class="stat-card"><h3>M-Pesa Payments</h3><div class="number" id="mpesaCount">0</div></div>
+            <div class="stat-card"><h3>Total Transactions</h3><div class="number" id="totalTransactions">0</div></div>
         </div>
         
         <div class="card">
-            <h2>💳 Make Payment</h2>
-            <div class="form-group">
-                <label>Student Name</label>
-                <select>
-                    <option>James Mwangi - Grade 8</option>
-                    <option>Brian Otieno - Grade 8</option>
-                    <option>Alex Kimani - Form 3</option>
-                    <option>Michael Omondi - Grade 7</option>
-                </select>
+            <h2>💳 Recent Payments <button class="btn-refresh" onclick="loadPayments()">🔄 Refresh</button></h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Amount (KSh)</th>
+                            <th>Date</th>
+                            <th>Method</th>
+                            <th>Transaction ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsTable">
+                        <tr><td colspan="6" style="text-align:center;">Loading payments...</td></tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group">
-                <label>Payment Type</label>
-                <select>
-                    <option>School Fees - Term 1</option>
-                    <option>School Fees - Term 2</option>
-                    <option>School Fees - Term 3</option>
-                    <option>Library Fee</option>
-                    <option>Sports Fee</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Amount (KSh)</label>
-                <input type="number" value="15000">
-            </div>
-            <div class="form-group">
-                <label>Payment Method</label>
-                <select>
-                    <option>M-Pesa</option>
-                    <option>Bank Transfer</option>
-                    <option>Cash</option>
-                </select>
-            </div>
-            
-            <div class="mpesa-prompt">
-                <h3 style="color:#2D9B4E;">📱 Pay with M-Pesa</h3>
-                <p style="margin:15px 0;">Paybill Number: <strong>123456</strong></p>
-                <p>Account Number: <strong>DAWAMU + Student ID</strong></p>
-                <p style="margin:10px 0; font-size:12px; color:#666;">Or use the M-Pesa App to send payment</p>
-                <button class="btn-mpesa" onclick="processMPesa()">💳 Process M-Pesa Payment</button>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>📋 Recent Payments</h2>
-            <table>
-                <thead><tr><th>Student</th><th>Amount (KSh)</th><th>Date</th><th>Method</th><th>Status</th></tr></thead>
-                <tbody>
-                    <tr><td>James Mwangi</td><td>15,000</td><td>2026-06-10</td><td>M-Pesa</td><td class="paid">✓ Paid</td></tr>
-                    <tr><td>Brian Otieno</td><td>15,000</td><td>2026-06-05</td><td>Bank</td><td class="paid">✓ Paid</td></tr>
-                    <tr><td>Alex Kimani</td><td>18,000</td><td>2026-06-01</td><td>Cash</td><td class="paid">✓ Paid</td></tr>
-                    <tr><td>Michael Omondi</td><td>15,000</td><td>2026-05-28</td><td>M-Pesa</td><td class="pending">⏳ Pending</td></tr>
-                </tbody>
-            </table>
         </div>
         
         <div class="footer"><p>Dawamu School Management System - Online Payments</p></div>
     </div>
     
     <script>
-        function processMPesa() {
-            if(confirm('💰 Process M-Pesa payment for this student?\n\nPaybill: 123456\nAccount: DAWAMU + Student ID\n\nClick OK to simulate payment processing')) {
-                alert('✅ M-Pesa payment processed successfully!\n\nAmount: KSh 15,000\nTransaction ID: MPS' + Math.floor(Math.random() * 1000000) + '\n\nReceipt sent to parent\'s phone.');
-                document.getElementById('mpesaPayments').innerText = parseInt(document.getElementById('mpesaPayments').innerText) + 1;
+        const API_URL = 'http://localhost:5000/api';
+        
+        function getToken() { return localStorage.getItem('token'); }
+        
+        function checkLogin() {
+            const token = getToken();
+            if (!token) window.location.href = 'index.html';
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.role !== 'admin') window.location.href = 'index.html';
+        }
+        
+        // Load payment statistics
+        async function loadStats() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/payments/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                document.getElementById('totalCollected').innerText = 'KSh ' + (data.total_collected || 0).toLocaleString();
+                document.getElementById('pendingPayments').innerText = 'KSh ' + (data.pending_amount || 0).toLocaleString();
+                document.getElementById('mpesaCount').innerText = data.mpesa_count || 0;
+                document.getElementById('totalTransactions').innerText = data.total_transactions || 0;
+            } catch(err) {
+                console.error('Error loading stats:', err);
             }
         }
+        
+        // Load payments
+        async function loadPayments() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/payments`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                renderPayments(data);
+            } catch(err) {
+                console.error('Error loading payments:', err);
+                document.getElementById('paymentsTable').innerHTML = '<tr><td colspan="6" style="text-align:center;">Error loading payments</td></tr>';
+            }
+        }
+        
+        function renderPayments(payments) {
+            const tbody = document.getElementById('paymentsTable');
+            tbody.innerHTML = '';
+            
+            if (payments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No payments recorded yet</td></tr>';
+                return;
+            }
+            
+            payments.forEach(p => {
+                const statusClass = p.status === 'Completed' ? 'status-paid' : 'status-pending';
+                const methodClass = p.payment_method === 'M-Pesa' ? 'method-mpesa' : 
+                                   p.payment_method === 'Bank' ? 'method-bank' : 'method-cash';
+                const date = p.payment_date ? new Date(p.payment_date).toLocaleDateString() : 'N/A';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${p.student_name}</strong></td>
+                        <td>KSh ${p.amount.toLocaleString()}</td>
+                        <td>${date}</td>
+                        <td><span class="payment-method-badge ${methodClass}">${p.payment_method || 'N/A'}</span></td>
+                        <td style="font-size:12px; color:#666;">${p.transaction_id || 'N/A'}</td>
+                        <td class="${statusClass}">${p.status === 'Completed' ? '✓ Paid' : '⏳ Pending'}</td>
+                    </tr>
+                `;
+            });
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            loadPayments();
+            loadStats();
+        }, 30000);
+        
+        window.onload = function() {
+            checkLogin();
+            loadPayments();
+            loadStats();
+        };
     </script>
 </body>
 </html>

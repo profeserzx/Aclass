@@ -18,8 +18,13 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 400px;
+            width: 420px;
             padding: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .login-header { text-align: center; margin-bottom: 30px; }
         .login-header img { height: 80px; margin-bottom: 15px; }
@@ -56,6 +61,16 @@
             text-align: center;
             display: none;
         }
+        .demo-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #F0F5E6;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            border-left: 4px solid #8DB600;
+        }
+        .demo-info strong { color: #8DB600; }
         .back-link { text-align: center; margin-top: 15px; }
         .back-link a { color: #8DB600; text-decoration: none; }
         .back-link a:hover { text-decoration: underline; }
@@ -82,6 +97,12 @@
             <div id="errorMessage" class="error-message"></div>
         </form>
         
+        <div class="demo-info">
+            <strong>Demo Parent Account:</strong><br>
+            Email: jasonnjagi@dawamu.ac.ke<br>
+            Password: parent123
+        </div>
+        
         <div class="back-link">
             <a href="index.html">← Back</a>
         </div>
@@ -98,8 +119,11 @@
             const errorDiv = document.getElementById('errorMessage');
             
             errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
             
             try {
+                console.log('🔑 Parent login attempt:', email);
+                
                 const res = await fetch(`${API_URL}/parent-login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -107,17 +131,20 @@
                 });
                 
                 const data = await res.json();
+                console.log('📨 Login response:', data);
                 
                 if (data.success) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
+                    console.log('✅ Login successful! Redirecting to parent dashboard...');
                     window.location.href = 'parent-dashboard.html';
                 } else {
                     errorDiv.textContent = data.message || 'Login failed. Please check your credentials.';
                     errorDiv.style.display = 'block';
                 }
             } catch(err) {
-                errorDiv.textContent = 'Server error. Please try again.';
+                console.error('❌ Error:', err);
+                errorDiv.textContent = 'Server error: ' + err.message;
                 errorDiv.style.display = 'block';
             }
         });

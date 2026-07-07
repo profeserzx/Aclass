@@ -8,7 +8,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
-        
         .header {
             background: white;
             padding: 15px 30px;
@@ -17,14 +16,11 @@
             align-items: center;
             border-bottom: 4px solid #8DB600;
         }
-        
         .logo { display: flex; align-items: center; gap: 15px; }
         .logo img { height: 50px; }
         .logo h1 { color: #8DB600; font-size: 24px; }
         .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
-        
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .welcome-card {
             background: white;
             padding: 20px;
@@ -34,14 +30,26 @@
             border-left: 5px solid #8DB600;
         }
         .welcome-card h2 { color: #8DB600; }
-        
+        .child-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #8DB600;
+        }
+        .child-selector label { font-weight: bold; margin-right: 10px; }
+        .child-selector select {
+            padding: 8px 15px;
+            border: 2px solid #8DB600;
+            border-radius: 8px;
+            background: white;
+        }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
-        
         .stat-card {
             background: white;
             padding: 20px;
@@ -51,35 +59,24 @@
         }
         .stat-card h3 { color: #666; font-size: 14px; }
         .stat-card .number { font-size: 28px; font-weight: bold; color: #8DB600; }
-        
         .card {
             background: white;
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 25px;
         }
-        .card h2 { color: #8DB600; margin-bottom: 20px; }
-        
-        .child-selector {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #F0F5E6;
-            border-radius: 10px;
-        }
-        .child-selector label { font-weight: bold; margin-right: 10px; }
-        .child-selector select {
-            padding: 8px 15px;
-            border: 2px solid #8DB600;
-            border-radius: 8px;
-            background: white;
-        }
-        
+        .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: #8DB600; color: white; }
+        .grade-A { color: #4caf50; font-weight: bold; }
+        .grade-B { color: #8DB600; font-weight: bold; }
+        .grade-C { color: #ff9800; font-weight: bold; }
+        .grade-D { color: #f44336; font-weight: bold; }
+        .grade-E { color: #f44336; font-weight: bold; }
         .fee-paid { color: #4caf50; font-weight: bold; }
         .fee-pending { color: #f44336; font-weight: bold; }
-        
+        .fee-partial { color: #ff9800; font-weight: bold; }
         .remarks-list { list-style: none; padding: 0; }
         .remarks-list li {
             padding: 10px;
@@ -88,14 +85,100 @@
             border-radius: 8px;
             border-left: 4px solid #8DB600;
         }
-        
         .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
-        
-        .loading {
+        .fee-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .fee-summary-item {
             text-align: center;
-            padding: 40px;
-            color: #8DB600;
-            font-size: 18px;
+            padding: 10px;
+            background: #F0F5E6;
+            border-radius: 10px;
+        }
+        .fee-summary-item .label { font-size: 12px; color: #666; }
+        .fee-summary-item .value { font-size: 20px; font-weight: bold; color: #8DB600; }
+        .school-balance { font-size: 24px; font-weight: bold; color: #8DB600; }
+        
+        /* Payment Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+        }
+        .modal-content h2 { color: #8DB600; margin-bottom: 20px; text-align: center; }
+        .modal-close { float: right; font-size: 28px; cursor: pointer; color: #666; }
+        .modal-close:hover { color: #333; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .btn-pay {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn-pay:hover { background: #6B8E00; }
+        .btn-pay:disabled { opacity: 0.5; cursor: not-allowed; }
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        .payment-method:hover { border-color: #8DB600; }
+        .payment-method.active { border-color: #8DB600; background: #F0F5E6; }
+        .payment-method img { height: 30px; }
+        .payment-method .name { font-weight: 500; }
+        .success-msg {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        .pay-btn {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .pay-btn:hover { background: #6B8E00; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .fee-summary { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -117,17 +200,15 @@
         <div class="child-selector">
             <label>Select Child:</label>
             <select id="childSelect" onchange="loadChildData()">
-                <option value="James Mwangi">James Mwangi - Grade 8</option>
-                <option value="Brian Otieno">Brian Otieno - Grade 8</option>
-                <option value="Alex Kimani">Alex Kimani - Form 3</option>
-                <option value="Michael Omondi">Michael Omondi - Grade 7</option>
+                <option value="">Loading children...</option>
             </select>
         </div>
         
         <div class="stats-grid">
-            <div class="stat-card"><h3>Overall Average</h3><div class="number" id="avgGrade">85%</div></div>
-            <div class="stat-card"><h3>Attendance Rate</h3><div class="number" id="attendanceRate">94%</div></div>
-            <div class="stat-card"><h3>Class Rank</h3><div class="number" id="classRank">3rd</div></div>
+            <div class="stat-card"><h3>Overall Average</h3><div class="number" id="avgGrade">-</div></div>
+            <div class="stat-card"><h3>Attendance Rate</h3><div class="number" id="attendanceRate">-</div></div>
+            <div class="stat-card"><h3>Class Rank</h3><div class="number" id="classRank">-</div></div>
+            <div class="stat-card"><h3>Total Subjects</h3><div class="number" id="totalSubjects">-</div></div>
         </div>
         
         <div class="card">
@@ -136,29 +217,66 @@
         </div>
         
         <div class="card">
-            <h2>Recent Exam Results</h2>
+            <h2>Exam Results</h2>
             <div style="overflow-x: auto;">
                 <table>
-                    <thead><tr><th>Subject</th><th>Marks</th><th>Grade</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Exam Type</th>
+                            <th>Term</th>
+                        </tr>
+                    </thead>
                     <tbody id="resultsBody">
-                        <tr><td>Mathematics</td><td>85%</td><td style="color:#8DB600">A</td></tr>
-                        <tr><td>Science</td><td>78%</td><td style="color:#8DB600">B+</td></tr>
-                        <tr><td>English</td><td>82%</td><td style="color:#8DB600">A-</td></tr>
-                        <tr><td>Kiswahili</td><td>88%</td><td style="color:#8DB600">A</td></tr>
-                        <tr><td>History</td><td>76%</td><td style="color:#8DB600">B</td></tr>
+                        <tr><td colspan="5" style="text-align:center;">No results available</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
         
         <div class="card">
-            <h2>Fee Status</h2>
-            <div style="overflow-x: auto;">
+            <h2>School Balance & Fee Status</h2>
+            <div style="background:#F0F5E6; padding:20px; border-radius:10px; margin-bottom:15px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                    <div>
+                        <div style="font-size:14px; color:#666;">Total Balance</div>
+                        <div class="school-balance" id="schoolBalance">KSh 0</div>
+                    </div>
+                    <div>
+                        <div style="font-size:14px; color:#666;">Payment Status</div>
+                        <div id="paymentStatus" style="font-size:18px; font-weight:bold; color:#4caf50;">Good Standing</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fee-summary">
+                <div class="fee-summary-item">
+                    <div class="label">Total Fees</div>
+                    <div class="value" id="totalFees">KSh 0</div>
+                </div>
+                <div class="fee-summary-item">
+                    <div class="label">Amount Paid</div>
+                    <div class="value" id="amountPaid" style="color:#4caf50;">KSh 0</div>
+                </div>
+                <div class="fee-summary-item">
+                    <div class="label">Amount Due</div>
+                    <div class="value" id="amountDue" style="color:#f44336;">KSh 0</div>
+                </div>
+            </div>
+            <div style="overflow-x: auto; margin-top:15px;">
                 <table>
-                    <thead><tr><th>Term</th><th>Amount (KSh)</th><th>Status</th></tr></thead>
-                    <tbody>
-                        <tr><td>Term 1</td><td>15,000</td><td style="color:#4caf50">Paid</td></tr>
-                        <tr><td>Term 2</td><td>15,000</td><td style="color:#f44336">Pending</td></tr>
+                    <thead>
+                        <tr>
+                            <th>Term</th>
+                            <th>Amount (KSh)</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feeBody">
+                        <tr><td colspan="5" style="text-align:center;">No fee records available</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -167,27 +285,75 @@
         <div class="card">
             <h2>Teacher Remarks</h2>
             <ul class="remarks-list" id="remarksList">
-                <li>Excellent performance in Mathematics</li>
-                <li>Good improvement in Science</li>
-                <li>Needs to participate more in class discussions</li>
+                <li>Loading remarks...</li>
             </ul>
         </div>
         
         <div class="footer"><p>Dawamu School | "Transforming Boys Into Leaders"</p></div>
     </div>
     
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closePaymentModal()">&times;</span>
+            <h2>💳 Make Payment</h2>
+            <div id="paymentSuccess" class="success-msg"></div>
+            
+            <div class="form-group">
+                <label>Student</label>
+                <input type="text" id="payStudentName" readonly style="background:#f5f5f5;">
+            </div>
+            <div class="form-group">
+                <label>Amount (KSh)</label>
+                <input type="number" id="payAmount" placeholder="Enter amount" min="1">
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <div class="payment-method active" onclick="selectPayment('mpesa')">
+                    <span style="font-size:24px;">📱</span>
+                    <span class="name">M-Pesa</span>
+                </div>
+                <div class="payment-method" onclick="selectPayment('bank')">
+                    <span style="font-size:24px;">🏦</span>
+                    <span class="name">Bank Transfer</span>
+                </div>
+            </div>
+            <div id="mpesaDetails" style="display:block;">
+                <div class="form-group">
+                    <label>M-Pesa Phone Number</label>
+                    <input type="tel" id="mpesaPhone" placeholder="e.g., 0712345678">
+                </div>
+            </div>
+            <div id="bankDetails" style="display:none;">
+                <div class="form-group">
+                    <label>Bank Name</label>
+                    <input type="text" id="bankName" placeholder="e.g., Equity Bank">
+                </div>
+                <div class="form-group">
+                    <label>Reference Number</label>
+                    <input type="text" id="bankRef" placeholder="Enter reference number">
+                </div>
+            </div>
+            <button class="btn-pay" onclick="processPayment()">🔒 Pay Now</button>
+        </div>
+    </div>
+    
     <script>
+        const API_URL = 'http://localhost:5000/api';
         let currentChart = null;
+        let currentStudent = null;
+        let selectedPayment = 'mpesa';
+        
+        function getToken() { return localStorage.getItem('token'); }
         
         function checkLogin() {
-            const token = localStorage.getItem('token');
-            if (!token) window.location.href = 'index.html';
+            const token = getToken();
+            if (!token) window.location.href = 'parent-login.html';
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.role !== 'parent') window.location.href = 'parent-login.html';
         }
         
-        function logout() { 
-            localStorage.clear(); 
-            window.location.href = 'index.html'; 
-        }
+        function logout() { localStorage.clear(); window.location.href = 'parent-login.html'; }
         
         function getGrade(marks) {
             if(marks >= 80) return "A";
@@ -197,130 +363,341 @@
             return "E";
         }
         
-        function loadChildData() {
-            const child = document.getElementById('childSelect').value;
-            
-            // Sample data for different students
-            const data = {
-                "James Mwangi": {
-                    marks: { Math: 85, Science: 78, English: 82, Kiswahili: 88, History: 76 },
-                    attendance: 94,
-                    rank: 3,
-                    results: [
-                        { subject: "Mathematics", marks: 85, grade: "A" },
-                        { subject: "Science", marks: 78, grade: "B+" },
-                        { subject: "English", marks: 82, grade: "A-" },
-                        { subject: "Kiswahili", marks: 88, grade: "A" },
-                        { subject: "History", marks: 76, grade: "B" }
-                    ],
-                    remarks: ["Excellent performance in Mathematics", "Good improvement in Science", "Needs to participate more in class discussions"]
-                },
-                "Brian Otieno": {
-                    marks: { Math: 72, Science: 88, English: 79, Kiswahili: 85, History: 80 },
-                    attendance: 90,
-                    rank: 5,
-                    results: [
-                        { subject: "Mathematics", marks: 72, grade: "B" },
-                        { subject: "Science", marks: 88, grade: "A" },
-                        { subject: "English", marks: 79, grade: "B+" },
-                        { subject: "Kiswahili", marks: 85, grade: "A-" },
-                        { subject: "History", marks: 80, grade: "A-" }
-                    ],
-                    remarks: ["Great improvement in Science", "Consistent effort across all subjects", "Keep up the good work"]
-                },
-                "Alex Kimani": {
-                    marks: { Math: 91, Science: 85, English: 88, Kiswahili: 82, History: 79 },
-                    attendance: 96,
-                    rank: 2,
-                    results: [
-                        { subject: "Mathematics", marks: 91, grade: "A" },
-                        { subject: "Science", marks: 85, grade: "A" },
-                        { subject: "English", marks: 88, grade: "A" },
-                        { subject: "Kiswahili", marks: 82, grade: "A-" },
-                        { subject: "History", marks: 79, grade: "B+" }
-                    ],
-                    remarks: ["Outstanding performance", "A role model to other students", "Keep up the excellent work!"]
-                },
-                "Michael Omondi": {
-                    marks: { Math: 68, Science: 75, English: 71, Kiswahili: 80, History: 73 },
-                    attendance: 88,
-                    rank: 8,
-                    results: [
-                        { subject: "Mathematics", marks: 68, grade: "C+" },
-                        { subject: "Science", marks: 75, grade: "B" },
-                        { subject: "English", marks: 71, grade: "B-" },
-                        { subject: "Kiswahili", marks: 80, grade: "A-" },
-                        { subject: "History", marks: 73, grade: "B" }
-                    ],
-                    remarks: ["Showing good progress", "Needs more practice in Mathematics", "Keep working hard!"]
-                }
-            };
-            
-            const studentData = data[child];
-            if(!studentData) return;
-            
-            // Update stats
-            const marks = Object.values(studentData.marks);
-            const avg = marks.reduce((a,b) => a+b, 0) / marks.length;
-            document.getElementById('avgGrade').innerText = Math.round(avg) + '%';
-            document.getElementById('attendanceRate').innerText = studentData.attendance + '%';
-            document.getElementById('classRank').innerText = studentData.rank + 
-                (studentData.rank === 1 ? 'st' : studentData.rank === 2 ? 'nd' : studentData.rank === 3 ? 'rd' : 'th');
-            
-            // Update chart
-            updateChart(studentData.marks);
-            
-            // Update results table
-            updateResults(studentData.results);
-            
-            // Update remarks
-            updateRemarks(studentData.remarks);
+        function getGradeClass(grade) {
+            return 'grade-' + grade;
         }
         
-        function updateChart(marks) {
-            const ctx = document.getElementById('performanceChart').getContext('2d');
-            if(currentChart) currentChart.destroy();
-            currentChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(marks),
-                    datasets: [{ 
-                        label: 'Marks (%)', 
-                        data: Object.values(marks), 
-                        backgroundColor: '#8DB600' 
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    scales: { y: { max: 100 } },
-                    plugins: { legend: { display: false } }
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.payment-method').forEach(el => {
+                if (el.querySelector('.name').innerText.toLowerCase().includes(method)) {
+                    el.classList.add('active');
                 }
             });
+            
+            document.getElementById('mpesaDetails').style.display = method === 'mpesa' ? 'block' : 'none';
+            document.getElementById('bankDetails').style.display = method === 'bank' ? 'block' : 'none';
+        }
+        
+        // Load parent's children
+        async function loadChildren() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/parent-children`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                const select = document.getElementById('childSelect');
+                select.innerHTML = '';
+                
+                if (data.success && data.students && data.students.length > 0) {
+                    data.students.forEach(s => {
+                        select.innerHTML += `<option value="${s.id}">${s.name} - ${s.grade}</option>`;
+                    });
+                    if (data.students.length > 0) {
+                        loadChildData();
+                    }
+                } else {
+                    select.innerHTML = '<option value="">No children linked to your account</option>';
+                }
+            } catch(err) {
+                console.error('Error loading children:', err);
+                document.getElementById('childSelect').innerHTML = '<option value="">Error loading children</option>';
+            }
+        }
+        
+        // Load child data
+        async function loadChildData() {
+            const select = document.getElementById('childSelect');
+            const studentId = select.value;
+            
+            if (!studentId) return;
+            
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/student-details/${studentId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    currentStudent = data.student;
+                    const results = data.results || [];
+                    
+                    const marks = results.map(r => r.marks);
+                    const avg = marks.length > 0 ? marks.reduce((a,b) => a+b, 0) / marks.length : 0;
+                    
+                    document.getElementById('avgGrade').innerText = avg > 0 ? Math.round(avg) + '%' : '-';
+                    document.getElementById('attendanceRate').innerText = (currentStudent.attendance_rate || 95) + '%';
+                    document.getElementById('classRank').innerText = currentStudent.class_rank || '-';
+                    document.getElementById('totalSubjects').innerText = results.length || 0;
+                    document.getElementById('welcomeMessage').innerText = `Viewing ${currentStudent.name}'s academic progress`;
+                    
+                    updateResults(results);
+                    updateChart(results);
+                    updateRemarks(results);
+                    loadFeeStatus(currentStudent.name);
+                }
+            } catch(err) {
+                console.error('Error loading student data:', err);
+            }
+        }
+        
+        async function loadFeeStatus(studentName) {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/fees-by-student/${encodeURIComponent(studentName)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const fees = await res.json();
+                
+                const tbody = document.getElementById('feeBody');
+                tbody.innerHTML = '';
+                
+                if (fees.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No fee records available</td></tr>';
+                    document.getElementById('schoolBalance').innerText = 'KSh 0';
+                    document.getElementById('totalFees').innerText = 'KSh 0';
+                    document.getElementById('amountPaid').innerText = 'KSh 0';
+                    document.getElementById('amountDue').innerText = 'KSh 0';
+                    document.getElementById('paymentStatus').innerText = 'No Records';
+                    return;
+                }
+                
+                let total = 0, paid = 0, due = 0;
+                
+                fees.forEach(f => {
+                    const statusClass = f.status === 'Paid' ? 'fee-paid' : 'fee-pending';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${f.term || 'Term'}</td>
+                            <td>KSh ${f.amount.toLocaleString()}</td>
+                            <td>${f.due_date || 'N/A'}</td>
+                            <td class="${statusClass}">${f.status}</td>
+                            <td>
+                                ${f.status === 'Pending' ? `<button class="pay-btn" onclick="openPaymentModal('${studentName}', ${f.amount})">Pay Now</button>` : '✅ Paid'}
+                            </td>
+                        </tr>
+                    `;
+                    
+                    total += f.amount;
+                    if (f.status === 'Paid') paid += f.amount;
+                    else due += f.amount;
+                });
+                
+                document.getElementById('schoolBalance').innerText = 'KSh ' + due.toLocaleString();
+                document.getElementById('totalFees').innerText = 'KSh ' + total.toLocaleString();
+                document.getElementById('amountPaid').innerText = 'KSh ' + paid.toLocaleString();
+                document.getElementById('amountDue').innerText = 'KSh ' + due.toLocaleString();
+                
+                if (due === 0) {
+                    document.getElementById('paymentStatus').innerText = 'Fully Paid ✅';
+                    document.getElementById('paymentStatus').style.color = '#4caf50';
+                } else if (paid > 0 && due > 0) {
+                    document.getElementById('paymentStatus').innerText = 'Partially Paid ⚠️';
+                    document.getElementById('paymentStatus').style.color = '#ff9800';
+                } else {
+                    document.getElementById('paymentStatus').innerText = 'Pending ❌';
+                    document.getElementById('paymentStatus').style.color = '#f44336';
+                }
+                
+            } catch(err) {
+                console.error('Error loading fees:', err);
+            }
+        }
+        
+        function openPaymentModal(studentName, amount) {
+            document.getElementById('payStudentName').value = studentName;
+            document.getElementById('payAmount').value = amount || '';
+            document.getElementById('paymentSuccess').style.display = 'none';
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+        
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+        
+        async function processPayment() {
+            const studentName = document.getElementById('payStudentName').value;
+            const amount = parseInt(document.getElementById('payAmount').value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            if (selectedPayment === 'mpesa') {
+                const phone = document.getElementById('mpesaPhone').value;
+                if (!phone || phone.length < 10) {
+                    alert('Please enter a valid M-Pesa phone number');
+                    return;
+                }
+            }
+            
+            if (selectedPayment === 'bank') {
+                const bank = document.getElementById('bankName').value;
+                const ref = document.getElementById('bankRef').value;
+                if (!bank || !ref) {
+                    alert('Please enter bank name and reference number');
+                    return;
+                }
+            }
+            
+            const btn = document.querySelector('.btn-pay');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/process-payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        student_name: studentName,
+                        amount: amount,
+                        payment_method: selectedPayment,
+                        phone: document.getElementById('mpesaPhone').value,
+                        bank_name: document.getElementById('bankName').value,
+                        bank_ref: document.getElementById('bankRef').value
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('paymentSuccess').innerHTML = `
+                        ✅ Payment of KSh ${amount.toLocaleString()} for ${studentName} was successful!<br>
+                        Payment Method: ${selectedPayment.toUpperCase()}
+                    `;
+                    document.getElementById('paymentSuccess').style.display = 'block';
+                    setTimeout(() => {
+                        closePaymentModal();
+                        loadChildData();
+                    }, 3000);
+                } else {
+                    alert('Payment failed: ' + data.message);
+                }
+            } catch(err) {
+                alert('Error processing payment: ' + err.message);
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '🔒 Pay Now';
         }
         
         function updateResults(results) {
             const tbody = document.getElementById('resultsBody');
             tbody.innerHTML = '';
+            
+            if (results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No results available</td></tr>';
+                return;
+            }
+            
             results.forEach(r => {
-                tbody.innerHTML += `<tr>
-                    <td>${r.subject}</td>
-                    <td>${r.marks}%</td>
-                    <td style="color:#8DB600; font-weight:bold">${r.grade}</td>
-                </tr>`;
+                const gradeClass = getGradeClass(r.grade || getGrade(r.marks));
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${r.subject_name || r.subject}</strong></td>
+                        <td>${r.marks}%</td>
+                        <td class="${gradeClass}">${r.grade || getGrade(r.marks)}</td>
+                        <td>${r.exam_type || 'End Term'}</td>
+                        <td>${r.term || 'Term 1'}</td>
+                    </tr>
+                `;
             });
         }
         
-        function updateRemarks(remarks) {
-            const container = document.getElementById('remarksList');
-            container.innerHTML = '';
-            remarks.forEach(r => {
-                container.innerHTML += `<li>${r}</li>`;
+        function updateChart(results) {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            if(currentChart) currentChart.destroy();
+            
+            if (results.length === 0) {
+                document.getElementById('performanceChart').style.display = 'none';
+                return;
+            }
+            document.getElementById('performanceChart').style.display = 'block';
+            
+            const subjects = results.map(r => r.subject_name || r.subject);
+            const marks = results.map(r => r.marks);
+            
+            currentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: subjects,
+                    datasets: [{ 
+                        label: 'Marks (%)', 
+                        data: marks, 
+                        backgroundColor: marks.map(m => m >= 80 ? '#4caf50' : m >= 70 ? '#8DB600' : m >= 60 ? '#ff9800' : '#f44336')
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    scales: { y: { max: 100, beginAtZero: true } },
+                    plugins: { legend: { display: false } }
+                }
             });
         }
+        
+        function updateRemarks(results) {
+            const container = document.getElementById('remarksList');
+            container.innerHTML = '';
+            
+            if (results.length === 0) {
+                container.innerHTML = '<li>No remarks available</li>';
+                return;
+            }
+            
+            const subjectRemarks = {
+                'Mathematics': 'Strong analytical skills, keep practicing!',
+                'English': 'Good communication skills, continue reading widely.',
+                'Kiswahili': 'Good progress, practice speaking more.',
+                'History': 'Good memory, continue learning about our past.',
+                'Business Studies': 'Good understanding of business concepts.',
+                'Computer Studies': 'Excellent technical skills!',
+                'CRE': 'Good moral understanding.',
+                'Geography': 'Good understanding of world geography.',
+                'Agriculture': 'Good practical skills.',
+                'Music': 'Good artistic talent.',
+                'French': 'Good progress in language learning.',
+                'Chemistry': 'Good lab skills and understanding.',
+                'Biology': 'Good interest in life sciences.',
+                'Physics': 'Good problem-solving skills.'
+            };
+            
+            results.forEach(r => {
+                const subject = r.subject_name || r.subject;
+                let remark = subjectRemarks[subject] || `Good performance in ${subject}`;
+                
+                if (r.marks >= 80) remark += ' Excellent performance!';
+                else if (r.marks >= 70) remark += ' Good work, keep it up!';
+                else if (r.marks >= 60) remark += ' Satisfactory, focus on improvement.';
+                else remark += ' Needs more effort and practice.';
+                
+                container.innerHTML += `<li><strong>${subject}:</strong> ${remark}</li>`;
+            });
+            
+            const marks = results.map(r => r.marks);
+            const avg = marks.reduce((a, b) => a + b, 0) / marks.length;
+            let overall = '';
+            if (avg >= 80) overall = 'Outstanding overall performance! Keep up the excellent work!';
+            else if (avg >= 70) overall = 'Good overall performance. Keep pushing for excellence!';
+            else if (avg >= 60) overall = 'Satisfactory performance. Focus on improving weaker areas.';
+            else overall = 'Needs more effort. Consistent practice will lead to improvement.';
+            container.innerHTML += `<li style="background: #8DB600; color: white; border-left-color: #6B8E00;">Overall: ${overall}</li>`;
+        }
+        
+        // Close modal on outside click
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) closePaymentModal();
+        });
         
         window.onload = function() {
             checkLogin();
-            loadChildData();
+            loadChildren();
         };
     </script>
 </body>

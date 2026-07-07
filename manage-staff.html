@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dawamu School - Manage Staff</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
+        
+        .header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #8DB600;
+        }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo img { height: 50px; }
+        .logo h1 { color: #8DB600; }
+        .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .btn {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #6B8E00; }
+        .btn-danger { background: #f44336; }
+        .btn-danger:hover { background: #d32f2f; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #8DB600; color: white; }
+        
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .role-admin { background: #f44336; color: white; }
+        .role-deputy { background: #FF9800; color: white; }
+        .role-dean { background: #2196F3; color: white; }
+        .role-teacher { background: #4caf50; color: white; }
+        
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+        .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="images/Logo.png" alt="Logo"><h1>DAWAMU SCHOOL - Staff Management</h1></div>
+        <div>
+            <a href="admin-dashboard.html" class="back-btn">← Back</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="successMsg" class="success-msg"></div>
+        <div id="errorMsg" class="error-msg"></div>
+        
+        <div class="card">
+            <h2>➕ Create Staff Account</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="staffName" placeholder="e.g., Mr. Karanja">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="staffEmail" placeholder="staff@dawamu.com">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="staffRole">
+                        <option value="teacher">Teacher</option>
+                        <option value="dean">Dean of Studies</option>
+                        <option value="deputy">Deputy Principal</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="text" id="staffPassword" placeholder="Auto-generate or type">
+                </div>
+            </div>
+            <button class="btn" onclick="createStaff()">➕ Create Staff Account</button>
+            <div id="generatedPassword" style="margin-top:15px;padding:15px;background:#F0F5E6;border-radius:8px;display:none;"></div>
+        </div>
+        
+        <div class="card">
+            <h2>👥 All Staff Members</h2>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffTable">
+                        <tr><td colspan="4" style="text-align:center;">Loading staff...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer"><p>Dawamu School Management System | "Transforming Boys Into Leaders"</p></div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        
+        function getToken() { return localStorage.getItem('token'); }
+        
+        function checkLogin() {
+            const token = getToken();
+            if (!token) window.location.href = 'index.html';
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.role !== 'admin') window.location.href = 'index.html';
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+        
+        function generatePassword() {
+            return Math.random().toString(36).slice(-8);
+        }
+        
+        async function createStaff() {
+            const name = document.getElementById('staffName').value.trim();
+            const email = document.getElementById('staffEmail').value.trim();
+            const role = document.getElementById('staffRole').value;
+            const password = document.getElementById('staffPassword').value || generatePassword();
+            
+            if (!name || !email) {
+                showError('Please fill in name and email');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/create-staff`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('generatedPassword').style.display = 'block';
+                    document.getElementById('generatedPassword').innerHTML = `
+                        ✅ Staff created successfully!<br>
+                        <strong>Name:</strong> ${name}<br>
+                        <strong>Email:</strong> ${email}<br>
+                        <strong>Password:</strong> ${password}<br>
+                        <strong>Role:</strong> ${role.toUpperCase()}
+                    `;
+                    showSuccess(`✅ ${role.toUpperCase()} account created for ${name}`);
+                    loadStaff();
+                    document.getElementById('staffName').value = '';
+                    document.getElementById('staffEmail').value = '';
+                    document.getElementById('staffPassword').value = '';
+                } else {
+                    showError('Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('Error: ' + err.message);
+            }
+        }
+        
+        async function loadStaff() {
+            try {
+                const res = await fetch(`${API_URL}/staff`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const staff = await res.json();
+                const tbody = document.getElementById('staffTable');
+                
+                if (!staff || staff.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">No staff members found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                staff.forEach(s => {
+                    const roleClass = `role-${s.role}`;
+                    const roleDisplay = s.role === 'admin' ? 'Admin' : 
+                                      s.role === 'deputy' ? 'Deputy Principal' :
+                                      s.role === 'dean' ? 'Dean of Studies' : 'Teacher';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${s.name}</strong></td>
+                            <td>${s.email}</td>
+                            <td><span class="role-badge ${roleClass}">${roleDisplay}</span></td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteStaff(${s.id})" style="padding:5px 15px;font-size:12px;">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch(err) {
+                console.error('Error:', err);
+                document.getElementById('staffTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#f44336;">Error loading staff</td></tr>';
+            }
+        }
+        
+        async function deleteStaff(id) {
+            if (!confirm('Are you sure you want to delete this staff member?')) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/staff/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess('Staff member deleted successfully');
+                    loadStaff();
+                } else {
+                    showError('Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('Error: ' + err.message);
+            }
+        }
+        
+        window.onload = function() {
+            checkLogin();
+            loadStaff();
+        };
+    </script>
+</body>
+</html>

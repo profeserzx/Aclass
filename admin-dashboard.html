@@ -72,6 +72,7 @@
         .menu-item:hover { transform: translateY(-3px); }
         .menu-item h4 { color: #8DB600; }
         .menu-item .icon { font-size: 32px; display: block; margin-bottom: 5px; }
+        .menu-item p { font-size: 12px; color: #666; }
         .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
     </style>
 </head>
@@ -93,46 +94,85 @@
         </div>
         
         <div class="charts">
-            <div class="chart-card"><h3>📊 Statistics</h3><canvas id="barChart"></canvas></div>
-            <div class="chart-card"><h3>✅ Attendance</h3><canvas id="attChart"></canvas></div>
+            <div class="chart-card"><h3>Statistics</h3><canvas id="barChart"></canvas></div>
+            <div class="chart-card"><h3>Attendance</h3><canvas id="attChart"></canvas></div>
         </div>
         
         <div class="menu">
+            <div class="menu-item" onclick="location.href='manage-students.html'">
+                <span class="icon">👤</span>
+                <h4>Students</h4>
+                <p>Manage students</p>
+            </div>
             <div class="menu-item" onclick="location.href='admin-parents.html'">
-                <span class="icon">👨‍👩‍👧</span><h4>Parents</h4><p>Manage accounts</p>
+                <span class="icon">👤</span>
+                <h4>Parents</h4>
+                <p>Manage accounts</p>
+            </div>
+            <div class="menu-item" onclick="location.href='manage-staff.html'">
+                <span class="icon">👥</span>
+                <h4>Staff</h4>
+                <p>Manage staff</p>
             </div>
             <div class="menu-item" onclick="location.href='email-notifications.html'">
-                <span class="icon">📧</span><h4>Email</h4><p>Notifications</p>
+                <span class="icon">✉️</span>
+                <h4>Email</h4>
+                <p>Notifications</p>
             </div>
             <div class="menu-item" onclick="location.href='manage-subject.html'">
-                <span class="icon">📚</span><h4>Subjects</h4><p>Manage subjects</p>
+                <span class="icon">📚</span>
+                <h4>Subjects</h4>
+                <p>Manage subjects</p>
             </div>
             <div class="menu-item" onclick="location.href='manage-bill.html'">
-                <span class="icon">💰</span><h4>Bills</h4><p>Fee management</p>
+                <span class="icon">💰</span>
+                <h4>Bills</h4>
+                <p>Fee management</p>
             </div>
             <div class="menu-item" onclick="location.href='manage-library.html'">
-                <span class="icon">📖</span><h4>Library</h4><p>Books</p>
+                <span class="icon">📖</span>
+                <h4>Library</h4>
+                <p>Books</p>
             </div>
             <div class="menu-item" onclick="location.href='manage-leaves.html'">
-                <span class="icon">📄</span><h4>Leave Out Sheets</h4><p>Permission notes</p>
+                <span class="icon">📄</span>
+                <h4>Leave Out Sheets</h4>
+                <p>Permission notes</p>
             </div>
             <div class="menu-item" onclick="location.href='manage-timetable.html'">
-                <span class="icon">📅</span><h4>Timetable</h4><p>Class schedules</p>
+                <span class="icon">📅</span>
+                <h4>Timetable</h4>
+                <p>Class schedules</p>
             </div>
-            <div class="menu-item" onclick="location.href='generate-reports.html'">
-                <span class="icon">📊</span><h4>Reports</h4><p>PDF reports</p>
+            <div class="menu-item" onclick="location.href='reports.html'">
+                <span class="icon">📊</span>
+                <h4>Reports</h4>
+                <p>PDF reports</p>
             </div>
             <div class="menu-item" onclick="location.href='sms-notifications.html'">
-                <span class="icon">📱</span><h4>SMS</h4><p>Notifications</p>
+                <span class="icon">📱</span>
+                <h4>SMS</h4>
+                <p>Notifications</p>
             </div>
-            <div class="menu-item" onclick="location.href='online-payments.html'">
-                <span class="icon">💳</span><h4>Payments</h4><p>M-Pesa</p>
+            <div class="menu-item" onclick="location.href='payments.html'">
+                <span class="icon">💳</span>
+                <h4>Payments</h4>
+                <p>M-Pesa</p>
+            </div>
+            <div class="menu-item" onclick="location.href='admin-backup.html'">
+                <span class="icon">💾</span>
+                <h4>Backup</h4>
+                <p>Database backup</p>
             </div>
             <div class="menu-item" onclick="location.href='analytics.html'">
-                <span class="icon">📈</span><h4>Analytics</h4><p>Advanced insights</p>
+                <span class="icon">📈</span>
+                <h4>Analytics</h4>
+                <p>Advanced insights</p>
             </div>
             <div class="menu-item" onclick="location.href='graduation.html'">
-                <span class="icon">🎓</span><h4>Graduation</h4><p>Track graduates</p>
+                <span class="icon">🎓</span>
+                <h4>Graduation</h4>
+                <p>Track graduates</p>
             </div>
         </div>
         

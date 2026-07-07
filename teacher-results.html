@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dawamu School - Exam Results</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
+        
+        .header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #8DB600;
+        }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo img { height: 50px; }
+        .logo h1 { color: #8DB600; font-size: 20px; }
+        .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .sidebar .menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: background 0.3s;
+            display: inline-block;
+        }
+        .sidebar .menu-item:hover { background: #F0F5E6; }
+        .sidebar .menu-item.active { background: #8DB600; color: white; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border-left: 5px solid #8DB600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .stat-card h3 { color: #666; font-size: 14px; }
+        .stat-card .number { font-size: 32px; font-weight: bold; color: #8DB600; }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #8DB600; color: white; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        
+        .btn {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #6B8E00; }
+        .btn-danger { background: #f44336; }
+        .btn-danger:hover { background: #d32f2f; }
+        
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+        .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        
+        .grade-A { color: #4caf50; font-weight: bold; }
+        .grade-B { color: #8BC34A; font-weight: bold; }
+        .grade-C { color: #FFC107; font-weight: bold; }
+        .grade-D { color: #FF9800; font-weight: bold; }
+        .grade-E { color: #f44336; font-weight: bold; }
+        
+        .subject-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            background: #F0F5E6;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .subject-row select, .subject-row input {
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .add-btn { background: #2196F3; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .remove-btn { background: #f44336; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #8DB600, #6B8E00);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        .welcome-card h2 { font-size: 24px; }
+        .welcome-card p { opacity: 0.9; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="images/Logo.png" alt="Logo"><h1>DAWAMU SCHOOL - Exam Results</h1></div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h2>Exam Results Management</h2>
+            <p>Add and manage student exam results</p>
+            <p style="font-size:12px;margin-top:5px;" id="todayDate"></p>
+        </div>
+        
+        <div class="sidebar">
+            <span class="menu-item" onclick="location.href='teacher-dashboard.html'">Dashboard</span>
+            <span class="menu-item" onclick="location.href='teacher-students.html'">My Students</span>
+            <span class="menu-item active" onclick="location.href='teacher-results.html'">Exam Results</span>
+            <span class="menu-item" onclick="location.href='teacher-attendance.html'">Attendance</span>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card"><h3>Total Students</h3><div class="number" id="totalStudents">0</div></div>
+            <div class="stat-card"><h3>Class Average</h3><div class="number" id="classAverage">0%</div></div>
+            <div class="stat-card"><h3>Top Student</h3><div class="number" id="topStudent">-</div></div>
+            <div class="stat-card"><h3>Pass Rate</h3><div class="number" id="passRate">0%</div></div>
+        </div>
+        
+        <div class="card">
+            <h2>Add/Edit Exam Result</h2>
+            <div id="successMsg" class="success-msg"></div>
+            <div id="errorMsg" class="error-msg"></div>
+            
+            <div class="form-group">
+                <label>Student</label>
+                <select id="studentSelect">
+                    <option value="">Select Student</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Exam Type</label>
+                <select id="examType">
+                    <option value="End Term">End Term</option>
+                    <option value="Mid Term">Mid Term</option>
+                    <option value="CAT 1">CAT 1</option>
+                    <option value="CAT 2">CAT 2</option>
+                    <option value="Mock">Mock</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Term</label>
+                <select id="examTerm">
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Term 3">Term 3</option>
+                </select>
+            </div>
+            
+            <div id="subjectsContainer">
+                <div class="subject-row">
+                    <select class="subject-select">
+                        <option value="">Select Subject</option>
+                    </select>
+                    <input type="number" class="marks-input" placeholder="Marks (0-100)" min="0" max="100">
+                    <button class="remove-btn" onclick="removeSubject(this)">Remove</button>
+                </div>
+            </div>
+            
+            <button class="add-btn" onclick="addSubject()">+ Add Another Subject</button>
+            <button class="btn" onclick="saveResults()">Save Results</button>
+        </div>
+        
+        <div class="card">
+            <h2>All Exam Results</h2>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Points</th>
+                            <th>Exam Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTable">
+                        <tr><td colspan="7" style="text-align:center;color:#999;">Loading results...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer"><p>Dawamu School | Transforming Boys Into Leaders</p></div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let allStudents = [];
+        let allSubjects = [];
+        let allResults = [];
+        
+        function getToken() { return localStorage.getItem('token'); }
+        
+        function checkLogin() {
+            const token = getToken();
+            if (!token) window.location.href = 'index.html';
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        function addSubject() {
+            const container = document.getElementById('subjectsContainer');
+            const row = document.createElement('div');
+            row.className = 'subject-row';
+            row.innerHTML = `
+                <select class="subject-select">
+                    <option value="">Select Subject</option>
+                    ${allSubjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
+                </select>
+                <input type="number" class="marks-input" placeholder="Marks (0-100)" min="0" max="100">
+                <button class="remove-btn" onclick="removeSubject(this)">Remove</button>
+            `;
+            container.appendChild(row);
+        }
+        
+        function removeSubject(btn) {
+            const container = document.getElementById('subjectsContainer');
+            if (container.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('You need at least one subject');
+            }
+        }
+        
+        async function loadStudents() {
+            const token = getToken();
+            if (!token) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                allStudents = await res.json();
+                const select = document.getElementById('studentSelect');
+                select.innerHTML = '<option value="">Select Student</option>';
+                allStudents.forEach(s => {
+                    select.innerHTML += `<option value="${s.id}">${s.name} - ${s.grade}</option>`;
+                });
+            } catch(err) {
+                console.error('Error loading students:', err);
+            }
+        }
+        
+        async function loadSubjects() {
+            const token = getToken();
+            if (!token) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/subjects`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                allSubjects = await res.json();
+                document.querySelectorAll('.subject-select').forEach(sel => {
+                    sel.innerHTML = '<option value="">Select Subject</option>' + 
+                        allSubjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                });
+            } catch(err) {
+                console.error('Error loading subjects:', err);
+            }
+        }
+        
+        async function loadResults() {
+            const token = getToken();
+            if (!token) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/results`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                allResults = await res.json();
+                displayResults(allResults);
+                updateStats(allResults);
+            } catch(err) {
+                console.error('Error loading results:', err);
+                document.getElementById('resultsTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#f44336;">Error loading results</td></tr>';
+            }
+        }
+        
+        function displayResults(results) {
+            const tbody = document.getElementById('resultsTable');
+            
+            if (!results || results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">No results found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            results.forEach(r => {
+                const gradeClass = r.grade ? `grade-${r.grade.charAt(0)}` : '';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${r.student_name || 'N/A'}</td>
+                        <td>${r.subject_name || r.subject || 'N/A'}</td>
+                        <td>${r.marks || 0}</td>
+                        <td class="${gradeClass}">${r.grade || 'N/A'}</td>
+                        <td>${r.marks ? (r.marks / 10).toFixed(1) : 'N/A'}</td>
+                        <td>${r.exam_type || 'N/A'}</td>
+                        <td>
+                            <button class="btn-danger" onclick="deleteResult(${r.id})" style="padding:5px 15px;font-size:12px;">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        function updateStats(results) {
+            document.getElementById('totalStudents').textContent = allStudents ? allStudents.length : 0;
+            
+            if (results && results.length > 0) {
+                let totalMarks = 0;
+                results.forEach(r => totalMarks += r.marks || 0);
+                const avg = (totalMarks / results.length).toFixed(1);
+                document.getElementById('classAverage').textContent = avg + '%';
+                
+                const studentMarks = {};
+                results.forEach(r => {
+                    if (r.student_name) {
+                        if (!studentMarks[r.student_name]) studentMarks[r.student_name] = [];
+                        studentMarks[r.student_name].push(r.marks || 0);
+                    }
+                });
+                let topStudent = '-';
+                let topAvg = 0;
+                for (const [name, marks] of Object.entries(studentMarks)) {
+                    const avg = marks.reduce((a,b) => a + b, 0) / marks.length;
+                    if (avg > topAvg) {
+                        topAvg = avg;
+                        topStudent = name;
+                    }
+                }
+                document.getElementById('topStudent').textContent = topStudent;
+                
+                const passed = results.filter(r => (r.marks || 0) >= 50).length;
+                document.getElementById('passRate').textContent = results.length > 0 ? Math.round((passed / results.length) * 100) + '%' : '0%';
+            }
+        }
+        
+        async function saveResults() {
+            const studentId = document.getElementById('studentSelect').value;
+            const examType = document.getElementById('examType').value;
+            const term = document.getElementById('examTerm').value;
+            
+            if (!studentId) {
+                showError('Please select a student');
+                return;
+            }
+            
+            const rows = document.querySelectorAll('.subject-row');
+            let saved = 0;
+            let failed = 0;
+            
+            for (let row of rows) {
+                const subjectSelect = row.querySelector('.subject-select');
+                const marksInput = row.querySelector('.marks-input');
+                
+                const subjectId = subjectSelect.value;
+                const subjectName = subjectSelect.options[subjectSelect.selectedIndex]?.text || '';
+                const marks = parseInt(marksInput.value);
+                
+                if (!subjectId) continue;
+                if (isNaN(marks) || marks < 0 || marks > 100) {
+                    showError(`Invalid marks for ${subjectName}`);
+                    failed++;
+                    continue;
+                }
+                
+                const token = getToken();
+                try {
+                    const res = await fetch(`${API_URL}/add-result`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            student_id: parseInt(studentId),
+                            subject_id: parseInt(subjectId),
+                            subject_name: subjectName,
+                            marks: marks,
+                            exam_type: examType,
+                            term: term,
+                            year: new Date().getFullYear()
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        saved++;
+                    } else {
+                        failed++;
+                        console.error('Error saving result:', data.message);
+                    }
+                } catch(err) {
+                    failed++;
+                    console.error('Error:', err);
+                }
+            }
+            
+            if (saved > 0) {
+                showSuccess(`Saved ${saved} result(s) successfully! ${failed > 0 ? failed + ' failed' : ''}`);
+                loadResults();
+            } else {
+                showError('Failed to save results. Please check your inputs.');
+            }
+        }
+        
+        async function deleteResult(id) {
+            if (!confirm('Are you sure you want to delete this result?')) return;
+            
+            const token = getToken();
+            try {
+                const res = await fetch(`${API_URL}/delete-result/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess('Result deleted successfully');
+                    loadResults();
+                } else {
+                    showError('Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('Error: ' + err.message);
+            }
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        
+        document.getElementById('todayDate').textContent = 'Today is ' + new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        
+        window.onload = function() {
+            checkLogin();
+            loadStudents();
+            loadSubjects();
+            loadResults();
+        };
+    </script>
+</body>
+</html>

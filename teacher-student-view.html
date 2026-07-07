@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dawamu School - Student Details</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
+        
+        .header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #8DB600;
+        }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo img { height: 50px; }
+        .logo h1 { color: #8DB600; font-size: 20px; }
+        .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; margin-right: 10px; }
+        .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
+        
+        .student-profile {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .profile-item { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .profile-item .label { font-weight: bold; color: #666; }
+        .profile-item .value { font-size: 18px; color: #333; margin-top: 3px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #8DB600; color: white; }
+        
+        .grade-A { color: #4caf50; font-weight: bold; }
+        .grade-B { color: #8BC34A; font-weight: bold; }
+        .grade-C { color: #FFC107; font-weight: bold; }
+        .grade-D { color: #FF9800; font-weight: bold; }
+        .grade-E { color: #f44336; font-weight: bold; }
+        
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+        .error-msg { background: #f44336; color: white; padding: 15px; border-radius: 8px; margin: 10px 0; display: none; }
+        .success-msg { background: #4caf50; color: white; padding: 15px; border-radius: 8px; margin: 10px 0; display: none; }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #8DB600, #6B8E00);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        .welcome-card h2 { font-size: 24px; }
+        .welcome-card p { opacity: 0.9; margin-top: 5px; }
+        
+        .summary-box {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .summary-item {
+            background: #F0F5E6;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .summary-item .number { font-size: 24px; font-weight: bold; color: #8DB600; }
+        .summary-item .label { color: #666; font-size: 12px; }
+        
+        .btn {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #6B8E00; }
+        .btn-danger { background: #f44336; }
+        .btn-danger:hover { background: #d32f2f; }
+        
+        .remarks-box {
+            background: #F0F5E6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="images/Logo.png" alt="Logo"><h1>DAWAMU SCHOOL - Student Details</h1></div>
+        <div>
+            <a href="teacher-students.html" class="back-btn">Back to Students</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="errorMsg" class="error-msg"></div>
+        <div id="successMsg" class="success-msg"></div>
+        
+        <div id="studentContent" style="display:none;">
+            <div class="welcome-card">
+                <h2 id="studentName">Student Details</h2>
+                <p id="studentGrade">Loading student information...</p>
+                <p style="font-size:12px;margin-top:5px;" id="todayDate"></p>
+            </div>
+            
+            <div class="card">
+                <h2>Personal Information</h2>
+                <div class="student-profile" id="studentInfo">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Academic Performance</h2>
+                <div class="summary-box" id="summaryBox">
+                    <div class="summary-item">
+                        <div class="number" id="avgMarks">0</div>
+                        <div class="label">Average Marks</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="number" id="totalSubjects">0</div>
+                        <div class="label">Subjects Taken</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="number" id="classRank">-</div>
+                        <div class="label">Class Rank</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="number" id="attendanceRate">-</div>
+                        <div class="label">Attendance Rate</div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x:auto;margin-top:20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Marks</th>
+                                <th>Grade</th>
+                                <th>Exam Type</th>
+                                <th>Term</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTable">
+                            <tr><td colspan="5" style="text-align:center;color:#999;">No results found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Fee Status</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Amount (KSh)</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feesTable">
+                            <tr><td colspan="4" style="text-align:center;color:#999;">No fees recorded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Teacher Remarks</h2>
+                <div id="remarksContainer">
+                    <p style="color:#999;">No remarks available</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="loadingContent" style="text-align:center;padding:50px;">
+            <p style="font-size:18px;color:#8DB600;">Loading student details...</p>
+        </div>
+        
+        <div class="footer"><p>Dawamu School | Transforming Boys Into Leaders</p></div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        
+        function getToken() { return localStorage.getItem('token'); }
+        
+        function checkLogin() {
+            const token = getToken();
+            if (!token) window.location.href = 'index.html';
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+        
+        function getStudentId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+        
+        async function loadStudentDetails() {
+            const studentId = getStudentId();
+            
+            if (!studentId) {
+                showError('No student ID provided');
+                document.getElementById('loadingContent').style.display = 'none';
+                return;
+            }
+            
+            const token = getToken();
+            if (!token) {
+                showError('Please login again');
+                return;
+            }
+            
+            try {
+                // Fetch student details
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!res.ok) {
+                    throw new Error('Failed to load student data');
+                }
+                
+                const students = await res.json();
+                const student = students.find(s => s.id == studentId);
+                
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+                
+                // Fetch results for this student
+                const resultsRes = await fetch(`${API_URL}/student-results/${studentId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                let results = [];
+                if (resultsRes.ok) {
+                    results = await resultsRes.json();
+                }
+                
+                // Display student info
+                displayStudentInfo(student);
+                displayResults(results);
+                displayFees(student);
+                displayRemarks(results);
+                updateSummary(student, results);
+                
+                document.getElementById('loadingContent').style.display = 'none';
+                document.getElementById('studentContent').style.display = 'block';
+                document.getElementById('studentName').textContent = student.name;
+                document.getElementById('studentGrade').textContent = student.grade + ' | Admission: ' + (student.admission_no || 'N/A');
+                
+            } catch(err) {
+                console.error('Error:', err);
+                showError('Error loading student details: ' + err.message);
+                document.getElementById('loadingContent').style.display = 'none';
+            }
+        }
+        
+        function displayStudentInfo(student) {
+            const container = document.getElementById('studentInfo');
+            container.innerHTML = `
+                <div class="profile-item">
+                    <div class="label">Full Name</div>
+                    <div class="value">${student.name || 'N/A'}</div>
+                </div>
+                <div class="profile-item">
+                    <div class="label">Admission Number</div>
+                    <div class="value">${student.admission_no || 'N/A'}</div>
+                </div>
+                <div class="profile-item">
+                    <div class="label">Grade/Form</div>
+                    <div class="value">${student.grade || 'N/A'}</div>
+                </div>
+                <div class="profile-item">
+                    <div class="label">Parent Phone</div>
+                    <div class="value">${student.parent_phone || 'N/A'}</div>
+                </div>
+                <div class="profile-item">
+                    <div class="label">Parent Email</div>
+                    <div class="value">${student.parent_email || 'N/A'}</div>
+                </div>
+                <div class="profile-item">
+                    <div class="label">Teacher ID</div>
+                    <div class="value">${student.teacher_id || 'Not assigned'}</div>
+                </div>
+            `;
+        }
+        
+        function displayResults(results) {
+            const tbody = document.getElementById('resultsTable');
+            
+            if (!results || results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No results found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            results.forEach(r => {
+                const gradeClass = r.grade ? `grade-${r.grade.charAt(0)}` : '';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${r.subject_name || r.subject || 'N/A'}</strong></td>
+                        <td>${r.marks || 0}</td>
+                        <td class="${gradeClass}">${r.grade || 'N/A'}</td>
+                        <td>${r.exam_type || 'N/A'}</td>
+                        <td>${r.term || 'N/A'}</td>
+                    </tr>
+                `;
+            });
+        }
+        
+        function displayFees(student) {
+            const tbody = document.getElementById('feesTable');
+            
+            // If we have fee data in the student object or we can fetch it
+            // For now, show a message
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align:center;color:#999;">
+                        Fee details not available. Please check the fee management page.
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function displayRemarks(results) {
+            const container = document.getElementById('remarksContainer');
+            
+            const remarks = results.filter(r => r.teacher_remark && r.teacher_remark !== '');
+            
+            if (!remarks || remarks.length === 0) {
+                container.innerHTML = '<p style="color:#999;">No remarks available</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            remarks.forEach(r => {
+                container.innerHTML += `
+                    <div class="remarks-box">
+                        <strong>${r.subject_name || r.subject || 'Subject'}:</strong>
+                        <p>${r.teacher_remark}</p>
+                        <small style="color:#666;">Marks: ${r.marks} | Grade: ${r.grade}</small>
+                    </div>
+                `;
+            });
+        }
+        
+        function updateSummary(student, results) {
+            let totalMarks = 0;
+            results.forEach(r => totalMarks += r.marks || 0);
+            const avg = results.length > 0 ? (totalMarks / results.length).toFixed(1) : 0;
+            
+            document.getElementById('avgMarks').textContent = avg;
+            document.getElementById('totalSubjects').textContent = results.length;
+            document.getElementById('classRank').textContent = student.class_rank || '-';
+            document.getElementById('attendanceRate').textContent = (student.attendance_rate || '-') + '%';
+        }
+        
+        document.getElementById('todayDate').textContent = 'Today is ' + new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        
+        window.onload = function() {
+            checkLogin();
+            loadStudentDetails();
+        };
+    </script>
+</body>
+</html>
