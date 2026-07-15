@@ -253,7 +253,7 @@
             
             try {
                 // Fetch student details
-                const res = await fetch(`${API_URL}/students`, {
+                const res = await fetch(${API_URL}/parent-students, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -292,7 +292,7 @@
                 document.getElementById('loadingContent').style.display = 'none';
                 document.getElementById('studentContent').style.display = 'block';
                 document.getElementById('studentName').textContent = student.name;
-                document.getElementById('studentGrade').textContent = student.grade + ' | Admission: ' + (student.admission_no || 'N/A');
+                document.getElementById('studentGrade').textContent = student.grade + ' | Admission: ' + (student.admission_number || 'N/A');
                 
             } catch(err) {
                 console.error('Error:', err);
@@ -310,7 +310,7 @@
                 </div>
                 <div class="profile-item">
                     <div class="label">Admission Number</div>
-                    <div class="value">${student.admission_no || 'N/A'}</div>
+                    <div class="value">${student.admission_number || 'N/A'}</div>
                 </div>
                 <div class="profile-item">
                     <div class="label">Grade/Form</div>

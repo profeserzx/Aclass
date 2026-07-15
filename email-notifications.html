@@ -18,7 +18,7 @@
         }
         .logo { display: flex; align-items: center; gap: 15px; }
         .logo img { height: 50px; }
-        .logo h1 { color: #8DB600; }
+        .logo h1 { color: #8DB600; font-size: 22px; }
         .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
         .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
         
@@ -41,14 +41,9 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             box-sizing: border-box;
+            font-family: inherit;
         }
-        .form-group textarea { height: 100px; resize: vertical; font-family: inherit; }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
+        .form-group textarea { height: 100px; resize: vertical; }
         
         .btn {
             background: #8DB600;
@@ -60,69 +55,50 @@
             margin-top: 10px;
         }
         .btn:hover { background: #6B8E00; }
-        .btn-primary { background: #2196F3; }
-        .btn-primary:hover { background: #1976D2; }
+        .btn-secondary { background: #2196F3; }
+        .btn-secondary:hover { background: #1976D2; }
         
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: #8DB600; color: white; }
         
-        /* ===== STYLED STATS CARDS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: white;
-            padding: 25px 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            border-left: 5px solid #8DB600;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-3px);
-        }
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #8DB600;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .stat-card .number.blue { color: #2196F3; }
-        .stat-card .number.green { color: #4caf50; }
-        .stat-card .number.red { color: #f44336; }
-        .stat-card .number.orange { color: #FF9800; }
-        .stat-card .label {
-            font-size: 13px;
-            color: #666;
-            font-weight: 500;
-        }
-        .stat-card .sub-label {
-            font-size: 11px;
-            color: #999;
-            margin-top: 3px;
-        }
-        
         .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
         .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
         .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
         
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-box h3 { font-size: 28px; color: #8DB600; }
+        .stat-box p { color: #666; font-size: 14px; }
+        
         .preview-box {
-            background: #F0F5E6;
+            background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
-            margin: 10px 0;
-            min-height: 50px;
-            border-left: 4px solid #8DB600;
+            min-height: 80px;
+            border: 2px dashed #ddd;
+            margin-top: 10px;
         }
-        .status-sent { color: #4caf50; font-weight: bold; }
-        .status-failed { color: #f44336; font-weight: bold; }
-        .status-pending { color: #FF9800; font-weight: bold; }
+        .badge { 
+            display: inline-block; 
+            padding: 3px 10px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 600; 
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-warning { background: #fff3cd; color: #856404; }
     </style>
 </head>
 <body>
@@ -138,49 +114,35 @@
         <div id="successMsg" class="success-msg"></div>
         <div id="errorMsg" class="error-msg"></div>
         
-        <!-- STYLED STATS CARDS -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="number blue" id="sentToday">0</span>
-                <div class="label">Sent Today</div>
-                <div class="sub-label">Emails</div>
-            </div>
-            <div class="stat-card">
-                <span class="number" id="totalParents">0</span>
-                <div class="label">Total Parents</div>
-                <div class="sub-label">Registered</div>
-            </div>
-            <div class="stat-card">
-                <span class="number green" id="successRate">0%</span>
-                <div class="label">Success Rate</div>
-                <div class="sub-label">Delivery</div>
-            </div>
-            <div class="stat-card">
-                <span class="number red" id="pendingEmails">0</span>
-                <div class="label">Failed</div>
-                <div class="sub-label">Emails</div>
+        <!-- Stats -->
+        <div class="card">
+            <h2>📊 Email Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box"><h3 id="sentToday">0</h3><p>Sent Today</p></div>
+                <div class="stat-box"><h3 id="totalParents">0</h3><p>Total Parents</p></div>
+                <div class="stat-box"><h3 id="successRate">0%</h3><p>Success Rate</p></div>
+                <div class="stat-box"><h3 id="failedEmails">0</h3><p>Failed Emails</p></div>
             </div>
         </div>
         
         <!-- Send to Specific Parent -->
         <div class="card">
             <h2>Send to Specific Student's Parent</h2>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Select Student</label>
-                    <select id="studentSelect">
-                        <option value="">Loading students...</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Email Type</label>
-                    <select id="emailType">
-                        <option value="announcement">Announcement</option>
-                        <option value="fee">Fee Reminder</option>
-                        <option value="attendance">Attendance Alert</option>
-                        <option value="exam">Exam Results</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label>Select Student</label>
+                <select id="studentSelect">
+                    <option value="">Loading students...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Email Type</label>
+                <select id="emailType">
+                    <option value="Announcement">📢 Announcement</option>
+                    <option value="Fee Reminder">💰 Fee Reminder</option>
+                    <option value="Report Card">📊 Report Card</option>
+                    <option value="Event Invitation">🎉 Event Invitation</option>
+                    <option value="General">📝 General</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Subject</label>
@@ -190,46 +152,7 @@
                 <label>Message</label>
                 <textarea id="emailMessage" placeholder="Type your message..."></textarea>
             </div>
-            <div class="form-group" id="feeFields" style="display:none;">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Amount (KSh)</label>
-                        <input type="number" id="feeAmount" placeholder="15000">
-                    </div>
-                    <div class="form-group">
-                        <label>Due Date</label>
-                        <input type="date" id="feeDueDate">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" id="attendanceFields" style="display:none;">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Date</label>
-                        <input type="date" id="attendanceDate">
-                    </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select id="attendanceStatus">
-                            <option value="Present">Present</option>
-                            <option value="Absent">Absent</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" id="examFields" style="display:none;">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Subject</label>
-                        <input type="text" id="examSubject" placeholder="e.g., Mathematics">
-                    </div>
-                    <div class="form-group">
-                        <label>Marks (%)</label>
-                        <input type="number" id="examMarks" placeholder="75">
-                    </div>
-                </div>
-            </div>
-            <button class="btn" onclick="sendToParent()">Send to Parent</button>
+            <button class="btn" onclick="sendEmail()">Send to Parent</button>
         </div>
         
         <!-- Send to All Parents -->
@@ -247,16 +170,21 @@
                 <label>Preview:</label>
                 <div class="preview-box" id="previewBox">Your message will appear here...</div>
             </div>
-            <button class="btn btn-primary" onclick="sendToAll()">Send to All Parents</button>
+            <button class="btn btn-secondary" onclick="sendEmailToAll()">Send to All Parents</button>
         </div>
         
         <!-- Email History -->
         <div class="card">
-            <h2>Email History</h2>
+            <h2>📧 Email History</h2>
             <div style="overflow-x:auto;">
                 <table>
                     <thead>
-                        <tr><th>Date</th><th>Student</th><th>Type</th><th>Status</th></tr>
+                        <tr>
+                            <th>Date</th>
+                            <th>Student</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody id="historyTable">
                         <tr><td colspan="4" style="text-align:center;color:#999;">Loading email history...</td></tr>
@@ -265,7 +193,7 @@
             </div>
         </div>
         
-        <div class="footer"><p>Dawamu School Management System - Email Notifications</p></div>
+        <div class="footer"><p>Dawamu School Management System | "Transforming Boys Into Leaders"</p></div>
     </div>
     
     <script>
@@ -297,105 +225,44 @@
             setTimeout(() => { el.style.display = 'none'; }, 4000);
         }
         
-        // Show/hide fields based on email type
-        document.getElementById('emailType').addEventListener('change', function() {
-            const type = this.value;
-            document.getElementById('feeFields').style.display = type === 'fee' ? 'block' : 'none';
-            document.getElementById('attendanceFields').style.display = type === 'attendance' ? 'block' : 'none';
-            document.getElementById('examFields').style.display = type === 'exam' ? 'block' : 'none';
-        });
-        
-        // Live preview
-        document.getElementById('allMessage').addEventListener('input', function() {
-            document.getElementById('previewBox').textContent = this.value || 'Your message will appear here...';
-        });
-        
-        // Load students
+        // Load students for dropdown
         async function loadStudents() {
             try {
+                const token = getToken();
+                if (!token) return;
+                
                 const res = await fetch(`${API_URL}/students`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const students = await res.json();
+                
+                if (!res.ok) throw new Error('Failed to load students');
+                
+                const data = await res.json();
                 const select = document.getElementById('studentSelect');
-                select.innerHTML = '<option value="">Select student</option>';
-                if (students && students.length > 0) {
-                    students.forEach(s => {
-                        select.innerHTML += `<option value="${s.id}" data-name="${s.name}" data-email="${s.parent_email}">${s.name} - ${s.grade}</option>`;
+                select.innerHTML = '<option value="">Select a student...</option>';
+                
+                if (data && data.length > 0) {
+                    data.forEach(s => {
+                        select.innerHTML += `<option value="${s.id}" data-email="${s.parent_email || ''}" data-name="${s.name}">${s.name} (${s.admission_number || 'N/A'})</option>`;
                     });
                 } else {
                     select.innerHTML = '<option value="">No students found</option>';
                 }
             } catch(err) {
-                console.error('Error:', err);
+                console.error('Error loading students:', err);
                 document.getElementById('studentSelect').innerHTML = '<option value="">Error loading students</option>';
             }
         }
         
-        // Load stats
-        async function loadStats() {
-            try {
-                const res = await fetch(`${API_URL}/email-stats`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                if (!res.ok) throw new Error('Failed to load stats');
-                const stats = await res.json();
-                document.getElementById('sentToday').textContent = stats.sent_today || 0;
-                document.getElementById('totalParents').textContent = stats.total_parents || 0;
-                const rate = stats.successful && stats.total_sent ? Math.round((stats.successful / stats.total_sent) * 100) : 0;
-                document.getElementById('successRate').textContent = rate + '%';
-                document.getElementById('pendingEmails').textContent = stats.failed || 0;
-            } catch(err) {
-                console.error('Error loading stats:', err);
-                document.getElementById('sentToday').textContent = '0';
-                document.getElementById('totalParents').textContent = '0';
-                document.getElementById('successRate').textContent = '0%';
-                document.getElementById('pendingEmails').textContent = '0';
-            }
-        }
-        
-        // Load email history
-        async function loadHistory() {
-            try {
-                const res = await fetch(`${API_URL}/email-history`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                if (!res.ok) throw new Error('Failed to load history');
-                const history = await res.json();
-                const tbody = document.getElementById('historyTable');
-                
-                if (!history || history.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">No emails sent yet</td></tr>';
-                    return;
-                }
-                
-                tbody.innerHTML = '';
-                history.forEach(h => {
-                    const statusClass = h.status === 'sent' ? 'status-sent' : 'status-failed';
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${h.sent_at ? new Date(h.sent_at).toLocaleString() : 'N/A'}</td>
-                            <td>${h.parent_email || 'N/A'}</td>
-                            <td>${h.type || 'N/A'}</td>
-                            <td class="${statusClass}">${h.status || 'N/A'}</td>
-                        </tr>
-                    `;
-                });
-            } catch(err) {
-                console.error('Error:', err);
-                document.getElementById('historyTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#f44336;">Error loading history</td></tr>';
-            }
-        }
-        
-        // Send to parent
-        async function sendToParent() {
+        // Send email to specific parent
+        async function sendEmail() {
             const select = document.getElementById('studentSelect');
             const studentId = select.value;
             const studentName = select.options[select.selectedIndex]?.getAttribute('data-name') || '';
             const parentEmail = select.options[select.selectedIndex]?.getAttribute('data-email') || '';
-            const emailType = document.getElementById('emailType').value;
             const subject = document.getElementById('emailSubject').value.trim();
             const message = document.getElementById('emailMessage').value.trim();
+            const type = document.getElementById('emailType').value;
             
             if (!studentId) {
                 showError('Please select a student');
@@ -406,103 +273,161 @@
                 return;
             }
             if (!subject || !message) {
-                showError('Please enter subject and message');
+                showError('Please fill in subject and message');
                 return;
             }
             
-            let extraData = {};
-            if (emailType === 'fee') {
-                extraData.amount = document.getElementById('feeAmount').value || 15000;
-                extraData.dueDate = document.getElementById('feeDueDate').value || new Date().toISOString().split('T')[0];
-            } else if (emailType === 'attendance') {
-                extraData.date = document.getElementById('attendanceDate').value || new Date().toISOString().split('T')[0];
-                extraData.status = document.getElementById('attendanceStatus').value;
-            } else if (emailType === 'exam') {
-                extraData.examSubject = document.getElementById('examSubject').value || 'Subject';
-                extraData.marks = document.getElementById('examMarks').value || 75;
-            }
-            
             try {
-                const res = await fetch(`${API_URL}/send-to-parent`, {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/send-email`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getToken()}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        studentName: studentName,
-                        subject: subject,
+                        to: parentEmail,
+                        subject: `[${type}] ${subject}`,
                         message: message,
-                        emailType: emailType,
-                        ...extraData
+                        student_name: studentName
                     })
                 });
                 
-                if (!res.ok) throw new Error('Server error: ' + res.status);
                 const data = await res.json();
-                
                 if (data.success) {
-                    showSuccess('Email sent successfully to ' + parentEmail + '!');
-                    loadStats();
+                    showSuccess(`✅ Email sent to ${studentName}'s parent!`);
                     loadHistory();
+                    updateStats();
                     document.getElementById('emailSubject').value = '';
                     document.getElementById('emailMessage').value = '';
                 } else {
-                    showError('Error: ' + data.message);
+                    showError('❌ Error: ' + data.message);
                 }
             } catch(err) {
-                showError('Error: ' + err.message);
+                showError('❌ Error: ' + err.message);
             }
         }
         
-        // Send to all parents
-        async function sendToAll() {
+        // Send email to all parents
+        async function sendEmailToAll() {
             const subject = document.getElementById('allSubject').value.trim();
             const message = document.getElementById('allMessage').value.trim();
             
             if (!subject || !message) {
-                showError('Please enter subject and message');
+                showError('Please fill in subject and message');
                 return;
             }
             
             if (!confirm('Are you sure you want to send this email to ALL parents?')) return;
             
             try {
-                const res = await fetch(`${API_URL}/send-announcement`, {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/send-email-all`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getToken()}`
+                        'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ title: subject, message: message })
+                    body: JSON.stringify({
+                        subject: subject,
+                        message: message
+                    })
                 });
                 
-                if (!res.ok) throw new Error('Server error: ' + res.status);
                 const data = await res.json();
-                
                 if (data.success) {
-                    showSuccess(`Email sent to ${data.sent || 0} parents!`);
-                    loadStats();
+                    showSuccess(data.message || '✅ Email sent to all parents!');
                     loadHistory();
+                    updateStats();
                     document.getElementById('allSubject').value = '';
                     document.getElementById('allMessage').value = '';
                     document.getElementById('previewBox').textContent = 'Your message will appear here...';
                 } else {
-                    showError('Error: ' + data.message);
+                    showError('❌ Error: ' + data.message);
                 }
             } catch(err) {
-                showError('Error: ' + err.message);
+                showError('❌ Error: ' + err.message);
+            }
+        }
+        
+        // Update live preview
+        document.getElementById('allMessage').addEventListener('input', function() {
+            document.getElementById('previewBox').textContent = this.value || 'Your message will appear here...';
+        });
+        
+        // Load email history
+        async function loadHistory() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/email-history`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!res.ok) {
+                    throw new Error('Failed to load history');
+                }
+                
+                const data = await res.json();
+                const tbody = document.getElementById('historyTable');
+                
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">No email history found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                data.forEach(h => {
+                    const statusClass = h.status === 'Sent' ? 'badge-success' : 'badge-danger';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${h.date || 'N/A'}</td>
+                            <td>${h.student || 'Unknown'}</td>
+                            <td>${h.type || h.subject || 'General'}</td>
+                            <td><span class="badge ${statusClass}">${h.status || 'Unknown'}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch(err) {
+                console.error('Error loading history:', err);
+                document.getElementById('historyTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#f44336;">Error loading history</td></tr>';
+            }
+        }
+        
+        // Update stats
+        async function updateStats() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/email-stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!res.ok) {
+                    throw new Error('Failed to load stats');
+                }
+                
+                const data = await res.json();
+                if (data) {
+                    document.getElementById('sentToday').textContent = data.sent_today || 0;
+                    document.getElementById('totalParents').textContent = data.total_parents || 0;
+                    document.getElementById('successRate').textContent = (data.success_rate || 0) + '%';
+                    document.getElementById('failedEmails').textContent = data.failed_emails || 0;
+                }
+            } catch(err) {
+                console.error('Error loading stats:', err);
             }
         }
         
         // Auto-refresh
-        setInterval(() => { loadStats(); loadHistory(); }, 30000);
+        setInterval(() => {
+            loadHistory();
+            updateStats();
+        }, 30000);
         
         window.onload = function() {
             checkLogin();
             loadStudents();
-            loadStats();
             loadHistory();
+            updateStats();
         };
     </script>
 </body>

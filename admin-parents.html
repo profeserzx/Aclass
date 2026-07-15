@@ -198,7 +198,7 @@
         // Load students for dropdown
         async function loadStudents() {
             try {
-                const res = await fetch(`${API_URL}/all-students`, {
+                const res = await fetch(`${API_URL}/parent-students`, {
                     headers: {
                         'Authorization': `Bearer ${getToken()}`
                     }
@@ -207,9 +207,9 @@
                 const select = document.getElementById('studentSelect');
                 select.innerHTML = '';
                 if (data && data.length > 0) {
-                    data.forEach(s => {
-                        select.innerHTML += `<option value="${s.id}">${s.name} - ${s.grade}</option>`;
-                    });
+                  data.forEach(s => {
+    select.innerHTML += `<option value="${s.id}">${s.name} (${s.admission_number || 'N/A'})</option>`;
+});
                 } else {
                     select.innerHTML = '<option value="">No students found</option>';
                 }

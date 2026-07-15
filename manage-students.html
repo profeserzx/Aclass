@@ -18,7 +18,7 @@
         }
         .logo { display: flex; align-items: center; gap: 15px; }
         .logo img { height: 50px; }
-        .logo h1 { color: #8DB600; }
+        .logo h1 { color: #8DB600; font-size: 22px; }
         .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
         .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
         
@@ -41,11 +41,12 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             box-sizing: border-box;
+            font-family: inherit;
         }
         
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
         
@@ -61,6 +62,8 @@
         .btn:hover { background: #6B8E00; }
         .btn-danger { background: #f44336; }
         .btn-danger:hover { background: #d32f2f; }
+        .btn-warning { background: #ff9800; }
+        .btn-warning:hover { background: #e68900; }
         
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
@@ -69,27 +72,82 @@
         .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
         .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
         .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
-        .delete-btn { 
-            background: #f44336; 
-            color: white; 
-            border: none; 
-            padding: 5px 12px; 
-            border-radius: 5px; 
-            cursor: pointer;
-            font-size: 12px;
+        
+        .badge { 
+            display: inline-block; 
+            padding: 3px 10px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 600; 
         }
-        .delete-btn:hover { background: #d32f2f; }
-        .edit-btn {
-            background: #2196F3;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-right: 5px;
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+        .actions button { padding: 5px 12px; font-size: 12px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-edit { background: #2196F3; color: white; }
+        .btn-edit:hover { background: #1976D2; }
+        .btn-delete { background: #f44336; color: white; }
+        .btn-delete:hover { background: #d32f2f; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
         }
-        .edit-btn:hover { background: #1976D2; }
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px; right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .modal h2 { color: #8DB600; margin-bottom: 20px; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-box h3 { font-size: 28px; color: #8DB600; }
+        .stat-box p { color: #666; font-size: 14px; }
+        
+        .search-box {
+            margin-bottom: 15px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -105,24 +163,36 @@
         <div id="successMsg" class="success-msg"></div>
         <div id="errorMsg" class="error-msg"></div>
         
+        <!-- Stats -->
         <div class="card">
-            <h2>Add New Student</h2>
+            <h2>📊 Student Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box"><h3 id="totalStudents">0</h3><p>Total Students</p></div>
+                <div class="stat-box"><h3 id="totalGrades">0</h3><p>Grades</p></div>
+                <div class="stat-box"><h3 id="totalParents">0</h3><p>Parents</p></div>
+            </div>
+        </div>
+        
+        <!-- Add Student Form -->
+        <div class="card">
+            <h2>➕ Add New Student</h2>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Student Name</label>
-                    <input type="text" id="studentName" placeholder="Full name">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" placeholder="e.g., John Doe">
                 </div>
                 <div class="form-group">
                     <label>Admission Number</label>
-                    <input type="text" id="admissionNo" placeholder="e.g., DAW/2024/001">
+                    <input type="text" id="admissionNumber" placeholder="e.g., DAW/2026/001">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Grade/Form</label>
+                    <label>Grade/Class</label>
                     <select id="studentGrade">
                         <option value="Grade 7">Grade 7</option>
                         <option value="Grade 8">Grade 8</option>
+                        <option value="Grade 9">Grade 9</option>
                         <option value="Form 1">Form 1</option>
                         <option value="Form 2">Form 2</option>
                         <option value="Form 3">Form 3</option>
@@ -130,32 +200,38 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Parent Phone</label>
-                    <input type="text" id="parentPhone" placeholder="+254 712 345678">
+                    <label>Parent Email</label>
+                    <input type="email" id="parentEmail" placeholder="parent@email.com">
                 </div>
             </div>
             <div class="form-group">
-                <label>Parent Email</label>
-                <input type="email" id="parentEmail" placeholder="parent@email.com">
+                <label>Parent Phone</label>
+                <input type="text" id="parentPhone" placeholder="+254 700 000000">
             </div>
             <button class="btn" onclick="addStudent()">Add Student</button>
         </div>
         
+        <!-- Student List -->
         <div class="card">
-            <h2>All Students</h2>
+            <h2>📋 All Students</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search students by name, admission number, or grade..." onkeyup="searchStudents()">
+            </div>
             <div style="overflow-x:auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>Admission No</th>
+                            <th>#</th>
                             <th>Name</th>
+                            <th>Admission</th>
                             <th>Grade</th>
                             <th>Parent Email</th>
+                            <th>Parent Phone</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="studentsTable">
-                        <tr><td colspan="5" style="text-align:center;color:#999;">Loading students...</td></tr>
+                    <tbody id="studentTable">
+                        <tr><td colspan="7" style="text-align:center;color:#999;">Loading students...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -164,8 +240,47 @@
         <div class="footer"><p>Dawamu School Management System | "Transforming Boys Into Leaders"</p></div>
     </div>
     
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeEditModal()">&times;</span>
+            <h2>✏️ Edit Student</h2>
+            <input type="hidden" id="editStudentId">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="editName" placeholder="Full name">
+            </div>
+            <div class="form-group">
+                <label>Admission Number</label>
+                <input type="text" id="editAdmission" placeholder="Admission number">
+            </div>
+            <div class="form-group">
+                <label>Grade/Class</label>
+                <select id="editGrade">
+                    <option value="Grade 7">Grade 7</option>
+                    <option value="Grade 8">Grade 8</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Form 1">Form 1</option>
+                    <option value="Form 2">Form 2</option>
+                    <option value="Form 3">Form 3</option>
+                    <option value="Form 4">Form 4</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Parent Email</label>
+                <input type="email" id="editParentEmail" placeholder="parent@email.com">
+            </div>
+            <div class="form-group">
+                <label>Parent Phone</label>
+                <input type="text" id="editParentPhone" placeholder="+254 700 000000">
+            </div>
+            <button class="btn" onclick="updateStudent()">Update Student</button>
+        </div>
+    </div>
+    
     <script>
         const API_URL = 'http://localhost:5000/api';
+        let allStudents = [];
         
         function getToken() { return localStorage.getItem('token'); }
         
@@ -193,152 +308,252 @@
             setTimeout(() => { el.style.display = 'none'; }, 4000);
         }
         
-        // Load students
-        async function loadStudents() {
-            const token = getToken();
-            if (!token) {
-                document.getElementById('studentsTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#f44336;">Please login again</td></tr>';
-                return;
-            }
-            
-            try {
-                const res = await fetch(`${API_URL}/students`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (!res.ok) {
-                    throw new Error('Server error: ' + res.status);
-                }
-                
-                const data = await res.json();
-                const tbody = document.getElementById('studentsTable');
-                
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">No students found</td></tr>';
-                    return;
-                }
-                
-                // Remove duplicates by id
-                const uniqueMap = new Map();
-                data.forEach(s => {
-                    if (!uniqueMap.has(s.id)) {
-                        uniqueMap.set(s.id, s);
-                    }
-                });
-                const students = Array.from(uniqueMap.values());
-                
-                tbody.innerHTML = '';
-                students.forEach(s => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${s.admission_no || 'N/A'}</td>
-                            <td><strong>${s.name || 'N/A'}</strong></td>
-                            <td>${s.grade || 'N/A'}</td>
-                            <td>${s.parent_email || 'N/A'}</td>
-                            <td>
-                                <button class="delete-btn" onclick="deleteStudent(${s.id})">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } catch(err) {
-                console.error('Error:', err);
-                document.getElementById('studentsTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#f44336;">Error loading students</td></tr>';
-                showError('Error loading students: ' + err.message);
-            }
-        }
-        
-        // Add student
+        // Add Student
         async function addStudent() {
             const name = document.getElementById('studentName').value.trim();
-            const admission_no = document.getElementById('admissionNo').value.trim();
+            const admission_number = document.getElementById('admissionNumber').value.trim();
             const grade = document.getElementById('studentGrade').value;
-            const parent_phone = document.getElementById('parentPhone').value.trim();
             const parent_email = document.getElementById('parentEmail').value.trim();
+            const parent_phone = document.getElementById('parentPhone').value.trim();
             
-            if (!name || !admission_no) {
-                showError('Please enter student name and admission number');
+            if (!name || !admission_number || !grade) {
+                showError('Please fill in name, admission number and grade');
                 return;
             }
             
-            const token = getToken();
             try {
+                const token = getToken();
                 const res = await fetch(`${API_URL}/add-student`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        name: name,
-                        admission_no: admission_no,
-                        grade: grade,
-                        parent_phone: parent_phone || null,
-                        parent_email: parent_email || null
-                    })
+                    body: JSON.stringify({ name, admission_number, grade, parent_email, parent_phone })
                 });
                 
-                if (!res.ok) {
-                    throw new Error('Server error: ' + res.status);
-                }
-                
                 const data = await res.json();
-                
                 if (data.success) {
-                    showSuccess('Student added successfully!');
-                    loadStudents();
+                    showSuccess('✅ Student added successfully!');
                     document.getElementById('studentName').value = '';
-                    document.getElementById('admissionNo').value = '';
-                    document.getElementById('parentPhone').value = '';
+                    document.getElementById('admissionNumber').value = '';
                     document.getElementById('parentEmail').value = '';
+                    document.getElementById('parentPhone').value = '';
+                    loadStudents();
+                    updateStats();
                 } else {
-                    showError('Error: ' + data.message);
+                    showError('❌ Error: ' + data.message);
                 }
             } catch(err) {
-                console.error('Error:', err);
-                showError('Error adding student: ' + err.message);
+                showError('❌ Error: ' + err.message);
             }
         }
         
-        // Delete student
+        // Load Students
+        async function loadStudents() {
+            try {
+                const token = getToken();
+                if (!token) return;
+                
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!res.ok) throw new Error('Failed to load students');
+                
+                allStudents = await res.json();
+                renderStudents(allStudents);
+            } catch(err) {
+                console.error('Error loading students:', err);
+                document.getElementById('studentTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#f44336;">Error loading students</td></tr>';
+            }
+        }
+        
+        // Render Students
+        function renderStudents(students) {
+            const tbody = document.getElementById('studentTable');
+            
+            if (!students || students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="icon">📚</div>
+                                <p>No students found. Add your first student!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            students.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${student.name}</strong></td>
+                    <td><span class="badge badge-info">${student.admission_number || 'N/A'}</span></td>
+                    <td><span class="badge badge-warning">${student.grade || 'N/A'}</span></td>
+                    <td>${student.parent_email || 'N/A'}</td>
+                    <td>${student.parent_phone || 'N/A'}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-edit" onclick="openEditModal(${student.id})">✏️ Edit</button>
+                            <button class="btn-delete" onclick="deleteStudent(${student.id})">🗑️ Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Search Students
+        function searchStudents() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (!query) {
+                renderStudents(allStudents);
+                return;
+            }
+            
+            const filtered = allStudents.filter(s => 
+                s.name.toLowerCase().includes(query) ||
+                (s.admission_number && s.admission_number.toLowerCase().includes(query)) ||
+                (s.grade && s.grade.toLowerCase().includes(query)) ||
+                (s.parent_email && s.parent_email.toLowerCase().includes(query))
+            );
+            renderStudents(filtered);
+        }
+        
+        // Delete Student
         async function deleteStudent(id) {
             if (!confirm('Are you sure you want to delete this student?')) return;
             
-            const token = getToken();
             try {
+                const token = getToken();
                 const res = await fetch(`${API_URL}/students/${id}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
-                if (!res.ok) {
-                    throw new Error('Server error: ' + res.status);
-                }
-                
                 const data = await res.json();
-                
                 if (data.success) {
-                    showSuccess('Student deleted successfully!');
+                    showSuccess('✅ Student deleted successfully!');
                     loadStudents();
+                    updateStats();
                 } else {
-                    showError('Error: ' + data.message);
+                    showError('❌ Error: ' + data.message);
                 }
             } catch(err) {
-                console.error('Error:', err);
-                showError('Error deleting student: ' + err.message);
+                showError('❌ Error: ' + err.message);
             }
         }
         
-        // Auto-refresh every 30 seconds
-        setInterval(loadStudents, 30000);
+        // Open Edit Modal
+        async function openEditModal(id) {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const students = await res.json();
+                const student = students.find(s => s.id === id);
+                
+                if (student) {
+                    document.getElementById('editStudentId').value = student.id;
+                    document.getElementById('editName').value = student.name;
+                    document.getElementById('editAdmission').value = student.admission_number || '';
+                    document.getElementById('editGrade').value = student.grade || 'Grade 7';
+                    document.getElementById('editParentEmail').value = student.parent_email || '';
+                    document.getElementById('editParentPhone').value = student.parent_phone || '';
+                    document.getElementById('editModal').style.display = 'block';
+                }
+            } catch(err) {
+                showError('Error loading student details');
+            }
+        }
         
+        // Close Edit Modal
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        // Update Student
+        async function updateStudent() {
+            const id = document.getElementById('editStudentId').value;
+            const name = document.getElementById('editName').value.trim();
+            const admission_number = document.getElementById('editAdmission').value.trim();
+            const grade = document.getElementById('editGrade').value;
+            const parent_email = document.getElementById('editParentEmail').value.trim();
+            const parent_phone = document.getElementById('editParentPhone').value.trim();
+            
+            if (!name || !admission_number || !grade) {
+                showError('Please fill in all required fields');
+                return;
+            }
+            
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/students/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, admission_number, grade, parent_email, parent_phone })
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess('✅ Student updated successfully!');
+                    closeEditModal();
+                    loadStudents();
+                    updateStats();
+                } else {
+                    showError('❌ Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('❌ Error: ' + err.message);
+            }
+        }
+        
+        // Update Stats
+        async function updateStats() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const students = await res.json();
+                document.getElementById('totalStudents').textContent = students ? students.length : 0;
+                
+                // Count unique grades
+                const grades = new Set(students.map(s => s.grade));
+                document.getElementById('totalGrades').textContent = grades.size;
+                
+                // Count unique parents
+                const parents = new Set(students.map(s => s.parent_email).filter(e => e));
+                document.getElementById('totalParents').textContent = parents.size;
+            } catch(err) {
+                console.error('Error updating stats:', err);
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        };
+        
+        // Initialize
         window.onload = function() {
             checkLogin();
             loadStudents();
+            updateStats();
         };
     </script>
 </body>

@@ -18,8 +18,9 @@
         }
         .logo { display: flex; align-items: center; gap: 15px; }
         .logo img { height: 50px; }
-        .logo h1 { color: #8DB600; }
+        .logo h1 { color: #8DB600; font-size: 22px; }
         .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
         
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         
@@ -32,31 +33,21 @@
         }
         .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .stat-item {
-            background: #F0F5E6;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .stat-item .number { font-size: 28px; font-weight: bold; color: #8DB600; }
-        .stat-item .label { color: #666; font-size: 14px; }
-        .stat-item .number.paid { color: #4caf50; }
-        .stat-item .number.pending { color: #f44336; }
-        
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
-        .form-group select, .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
         
         .btn {
@@ -66,92 +57,172 @@
             padding: 10px 25px;
             border-radius: 8px;
             cursor: pointer;
+            margin-top: 10px;
         }
         .btn:hover { background: #6B8E00; }
-        .btn-primary { background: #2196F3; }
-        .btn-primary:hover { background: #1976D2; }
+        .btn-secondary { background: #2196F3; }
+        .btn-secondary:hover { background: #1976D2; }
+        .btn-danger { background: #f44336; }
+        .btn-danger:hover { background: #d32f2f; }
         
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: #8DB600; color: white; }
-        .status-paid { color: #4caf50; font-weight: bold; }
-        .status-pending { color: #f44336; font-weight: bold; }
         
         .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
-        .refresh-btn { background: #8DB600; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; float: right; }
+        .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-box h3 { font-size: 28px; color: #8DB600; }
+        .stat-box .currency { font-size: 14px; color: #666; }
+        .stat-box p { color: #666; font-size: 14px; margin-top: 5px; }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+        .actions button { padding: 5px 12px; font-size: 12px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-delete { background: #f44336; color: white; }
+        .btn-delete:hover { background: #d32f2f; }
+        
+        .refresh-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .refresh-btn:hover { background: #1976D2; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 10px; }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo"><img src="images/Logo.png" alt="Logo"><h1>DAWAMU SCHOOL - Payments</h1></div>
-        <a href="admin-dashboard.html" class="back-btn">← Back</a>
+        <div>
+            <a href="admin-dashboard.html" class="back-btn">← Back</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
     </div>
     
     <div class="container">
+        <div id="successMsg" class="success-msg"></div>
+        <div id="errorMsg" class="error-msg"></div>
+        
+        <!-- Stats -->
         <div class="card">
             <h2>📊 Payment Summary</h2>
             <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="number paid">KSh <span id="totalCollected">0</span></div>
-                    <div class="label">Total Collected</div>
+                <div class="stat-box">
+                    <h3 id="totalCollected">KSh 0</h3>
+                    <p>Total Collected</p>
                 </div>
-                <div class="stat-item">
-                    <div class="number pending">KSh <span id="pendingAmount">0</span></div>
-                    <div class="label">Pending Payments</div>
+                <div class="stat-box">
+                    <h3 id="pendingPayments">KSh 0</h3>
+                    <p>Pending Payments</p>
                 </div>
-                <div class="stat-item">
-                    <div class="number"><span id="mpesaCount">0</span></div>
-                    <div class="label">M-Pesa Payments</div>
+                <div class="stat-box">
+                    <h3 id="mpesaCount">0</h3>
+                    <p>M-Pesa Payments</p>
                 </div>
-                <div class="stat-item">
-                    <div class="number"><span id="totalTransactions">0</span></div>
-                    <div class="label">Total Transactions</div>
+                <div class="stat-box">
+                    <h3 id="totalTransactions">0</h3>
+                    <p>Total Transactions</p>
                 </div>
             </div>
         </div>
         
+        <!-- Recent Payments -->
         <div class="card">
-            <h2>💳 Recent Payments <button class="refresh-btn" onclick="loadPayments()">🔄 Refresh</button></h2>
+            <div class="header-actions">
+                <h2>💳 Recent Payments</h2>
+                <button class="refresh-btn" onclick="loadPayments()">🔄 Refresh</button>
+            </div>
             <div style="overflow-x:auto;">
                 <table>
                     <thead>
-                        <tr><th>Student</th><th>Amount (KSh)</th><th>Date</th><th>Method</th><th>Transaction ID</th><th>Status</th></tr>
+                        <tr>
+                            <th>Student</th>
+                            <th>Amount (KSh)</th>
+                            <th>Date</th>
+                            <th>Method</th>
+                            <th>Transaction ID</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
-                    <tbody id="paymentsTable">
-                        <tr><td colspan="6" style="text-align:center;">Loading payments...</td></tr>
+                    <tbody id="paymentTable">
+                        <tr><td colspan="7" style="text-align:center;color:#999;">Loading payments...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
         
+        <!-- Record Payment -->
         <div class="card">
             <h2>➕ Record New Payment</h2>
             <div class="form-group">
                 <label>Student</label>
-                <select id="paymentStudent">
-                    <option value="">Select student</option>
+                <select id="studentSelect">
+                    <option value="">Select student...</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Amount (KSh)</label>
-                <input type="number" id="paymentAmount" placeholder="Enter amount">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Amount (KSh)</label>
+                    <input type="number" id="paymentAmount" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="M-Pesa">M-Pesa</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
-                <label>Payment Method</label>
-                <select id="paymentMethod">
-                    <option value="M-Pesa">M-Pesa</option>
-                    <option value="Bank">Bank Transfer</option>
-                </select>
-            </div>
-            <div class="form-group" id="phoneField">
                 <label>Phone Number (for M-Pesa)</label>
-                <input type="text" id="paymentPhone" placeholder="+2547XXXXXXXX">
+                <input type="text" id="phoneNumber" placeholder="+2547XXXXXXXX">
             </div>
-            <div class="form-group" id="bankField" style="display:none;">
-                <label>Bank Name</label>
-                <input type="text" id="paymentBank" placeholder="Enter bank name">
-            </div>
-            <button class="btn btn-primary" onclick="recordPayment()">💳 Record Payment</button>
+            <button class="btn" onclick="recordPayment()">💳 Record Payment</button>
         </div>
         
         <div class="footer"><p>Dawamu School Management System - Online Payments</p></div>
@@ -159,84 +230,144 @@
     
     <script>
         const API_URL = 'http://localhost:5000/api';
+        let allPayments = [];
+        let allStudents = [];
         
         function getToken() { return localStorage.getItem('token'); }
         
         function checkLogin() {
             const token = getToken();
-            if (!token) window.location.href = 'index.html';
+            if (!token) {
+                window.location.href = 'index.html';
+            }
         }
         
-        // Show/hide fields based on payment method
-        document.getElementById('paymentMethod').addEventListener('change', function() {
-            const method = this.value;
-            document.getElementById('phoneField').style.display = method === 'M-Pesa' ? 'block' : 'none';
-            document.getElementById('bankField').style.display = method === 'Bank' ? 'block' : 'none';
-        });
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
         
         // Load students for dropdown
         async function loadStudents() {
             try {
+                const token = getToken();
+                if (!token) return;
+                
                 const res = await fetch(`${API_URL}/students`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const students = await res.json();
-                const select = document.getElementById('paymentStudent');
-                select.innerHTML = '<option value="">Select student</option>';
-                students.forEach(s => {
-                    select.innerHTML += `<option value="${s.id}" data-name="${s.name}">${s.name} - ${s.grade}</option>`;
-                });
+                
+                if (!res.ok) throw new Error('Failed to load students');
+                
+                allStudents = await res.json();
+                const select = document.getElementById('studentSelect');
+                select.innerHTML = '<option value="">Select student...</option>';
+                
+                if (allStudents && allStudents.length > 0) {
+                    allStudents.forEach(s => {
+                        const option = document.createElement('option');
+                        option.value = s.id;
+                        option.textContent = `${s.name} (${s.admission_number || 'N/A'})`;
+                        select.appendChild(option);
+                    });
+                } else {
+                    select.innerHTML = '<option value="">No students found</option>';
+                }
             } catch(err) {
-                console.error('Error:', err);
+                console.error('Error loading students:', err);
+                document.getElementById('studentSelect').innerHTML = '<option value="">Error loading students</option>';
             }
         }
         
         // Load payments
         async function loadPayments() {
             try {
+                const token = getToken();
+                if (!token) return;
+                
                 const res = await fetch(`${API_URL}/payments`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const payments = await res.json();
-                const tbody = document.getElementById('paymentsTable');
                 
-                if (!payments || payments.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">No payments recorded</td></tr>';
-                    return;
-                }
+                if (!res.ok) throw new Error('Failed to load payments');
                 
-                tbody.innerHTML = '';
-                payments.forEach(p => {
-                    const statusClass = p.status === 'Completed' || p.status === 'Paid' ? 'status-paid' : 'status-pending';
-                    const statusText = p.status === 'Completed' || p.status === 'Paid' ? '✓ Paid' : '⏳ Pending';
-                    const method = p.payment_method || 'N/A';
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${p.student_name || 'N/A'}</td>
-                            <td>KSh ${(p.amount || 0).toLocaleString()}</td>
-                            <td>${new Date(p.payment_date).toLocaleDateString()}</td>
-                            <td>${method}</td>
-                            <td>${p.transaction_id || 'N/A'}</td>
-                            <td class="${statusClass}">${statusText}</td>
-                        </tr>
-                    `;
-                });
+                allPayments = await res.json();
+                renderPayments(allPayments);
+                updateStats();
             } catch(err) {
-                console.error('Error:', err);
-                document.getElementById('paymentsTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#f44336;">Error loading payments</td></tr>';
+                console.error('Error loading payments:', err);
+                document.getElementById('paymentTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#f44336;">Error loading payments</td></tr>';
             }
         }
         
-        // Load stats
-        async function loadStats() {
-            try {
-                const res = await fetch(`${API_URL}/payments/stats`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                const stats = await res.json();
+        // Render payments
+        function renderPayments(payments) {
+            const tbody = document.getElementById('paymentTable');
+            
+            if (!payments || payments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="icon">💳</div>
+                                <p>No payment records found. Record your first payment!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            payments.forEach(payment => {
+                const tr = document.createElement('tr');
+                const statusClass = payment.status === 'Completed' ? 'badge-success' : 
+                                   payment.status === 'Pending' ? 'badge-warning' : 'badge-danger';
                 
-                document.getElementById('totalCollected').textContent = (stats.total_collected || 0).toLocaleString();
-                document.getElementById('pendingAmount').textContent = (stats.pending_amount || 0).toLocaleString();
+                tr.innerHTML = `
+                    <td><strong>${payment.student_name || 'Unknown'}</strong></td>
+                    <td>KSh ${parseFloat(payment.amount || 0).toLocaleString()}</td>
+                    <td>${payment.payment_date ? new Date(payment.payment_date).toLocaleDateString() : 'N/A'}</td>
+                    <td><span class="badge badge-info">${payment.payment_method || 'N/A'}</span></td>
+                    <td><small>${payment.transaction_id || 'N/A'}</small></td>
+                    <td><span class="badge ${statusClass}">${payment.status || 'Pending'}</span></td>
+                    <td>
+                        <button class="btn-delete" onclick="deletePayment(${payment.id})">🗑️ Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Update stats
+        async function updateStats() {
+            try {
+                const token = getToken();
+                if (!token) return;
+                
+                const res = await fetch(`${API_URL}/payments/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!res.ok) throw new Error('Failed to load stats');
+                
+                const stats = await res.json();
+                document.getElementById('totalCollected').textContent = 'KSh ' + (stats.total_collected || 0).toLocaleString();
+                document.getElementById('pendingPayments').textContent = 'KSh ' + (stats.pending_payments || 0).toLocaleString();
                 document.getElementById('mpesaCount').textContent = stats.mpesa_count || 0;
                 document.getElementById('totalTransactions').textContent = stats.total_transactions || 0;
             } catch(err) {
@@ -246,69 +377,80 @@
         
         // Record payment
         async function recordPayment() {
-            const select = document.getElementById('paymentStudent');
-            const studentId = select.value;
-            const studentName = select.options[select.selectedIndex]?.getAttribute('data-name') || '';
+            const studentSelect = document.getElementById('studentSelect');
+            const studentId = studentSelect.value;
+            const studentName = studentSelect.options[studentSelect.selectedIndex]?.text || '';
             const amount = document.getElementById('paymentAmount').value;
-            const method = document.getElementById('paymentMethod').value;
-            const phone = document.getElementById('paymentPhone').value;
-            const bank = document.getElementById('paymentBank').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
             
-            if (!studentId) {
-                alert('Please select a student');
-                return;
-            }
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid amount');
-                return;
-            }
-            if (method === 'M-Pesa' && !phone) {
-                alert('Please enter phone number for M-Pesa');
+            if (!studentId || !amount || !paymentMethod) {
+                showError('Please select a student and enter amount');
                 return;
             }
             
             try {
+                const token = getToken();
                 const res = await fetch(`${API_URL}/payments`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getToken()}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        student_name: studentName,
                         student_id: parseInt(studentId),
+                        student_name: studentName,
                         amount: parseFloat(amount),
-                        payment_method: method,
-                        phone: phone || null,
-                        bank_name: bank || null,
-                        payment_type: 'School Fees'
+                        payment_method: paymentMethod,
+                        phone_number: phoneNumber || null,
+                        status: 'Completed'
                     })
                 });
-                const data = await res.json();
                 
+                const data = await res.json();
                 if (data.success) {
-                    alert(`✅ Payment recorded successfully!\nTransaction ID: ${data.transactionId}`);
-                    loadPayments();
-                    loadStats();
+                    showSuccess('✅ Payment recorded successfully!');
                     document.getElementById('paymentAmount').value = '';
-                    document.getElementById('paymentPhone').value = '';
-                    document.getElementById('paymentBank').value = '';
+                    document.getElementById('phoneNumber').value = '';
+                    loadPayments();
+                    updateStats();
                 } else {
-                    alert('❌ Error: ' + data.message);
+                    showError('❌ Error: ' + data.message);
                 }
             } catch(err) {
-                alert('Error: ' + err.message);
+                showError('❌ Error: ' + err.message);
             }
         }
         
-        // Auto-refresh every 30 seconds
-        setInterval(() => { loadPayments(); loadStats(); }, 30000);
+        // Delete payment
+        async function deletePayment(id) {
+            if (!confirm('Are you sure you want to delete this payment record?')) return;
+            
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/payments/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess('✅ Payment deleted successfully!');
+                    loadPayments();
+                    updateStats();
+                } else {
+                    showError('❌ Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('❌ Error: ' + err.message);
+            }
+        }
         
+        // Initialize
         window.onload = function() {
             checkLogin();
             loadStudents();
             loadPayments();
-            loadStats();
         };
     </script>
 </body>

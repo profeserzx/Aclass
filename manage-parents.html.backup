@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Parents - Dawamu School</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f2f5; }
+        .header { background: linear-gradient(135deg, #1a7a3a, #2d9b5e); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header h1 { font-size: 24px; }
+        .header .logo { display: flex; align-items: center; gap: 10px; }
+        .header .logo span { font-size: 28px; }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        .header-actions a { color: white; text-decoration: none; padding: 8px 16px; border-radius: 5px; background: rgba(255,255,255,0.2); transition: 0.3s; }
+        .header-actions a:hover { background: rgba(255,255,255,0.3); }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        .card h2 { color: #1a7a3a; margin-bottom: 20px; font-size: 20px; border-bottom: 2px solid #e8f5e9; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: #333; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; transition: 0.3s; }
+        .form-group input:focus, .form-group select:focus { border-color: #1a7a3a; outline: none; box-shadow: 0 0 0 3px rgba(26,122,58,0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group select[multiple] { height: 120px; }
+        .btn { padding: 10px 25px; border: none; border-radius: 5px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: #1a7a3a; color: white; }
+        .btn-primary:hover { background: #145a2c; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,122,58,0.3); }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; text-align: left; padding: 12px 15px; font-weight: 600; color: #333; border-bottom: 2px solid #dee2e6; }
+        td { padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
+        tr:hover { background: #f8fff8; }
+        .error { color: #dc3545; font-size: 13px; margin-top: 5px; }
+        .success { color: #1a7a3a; font-size: 13px; margin-top: 5px; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        .actions { display: flex; gap: 8px; }
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .header { flex-direction: column; gap: 10px; text-align: center; } .header-actions { flex-wrap: wrap; justify-content: center; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span>🏫</span>
+            <h1>DAWAMU SCHOOL - Manage Parents</h1>
+        </div>
+        <div class="header-actions">
+            <a href="admin-dashboard.html">← Back</a>
+            <a href="login.html" onclick="localStorage.removeItem('token');">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Create Parent Form -->
+        <div class="card">
+            <h2>Create Parent Account</h2>
+            <form id="createParentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="full_name" placeholder="Parent's full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="parent@email.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" id="password" placeholder="Auto-generate or type">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="phone" placeholder="+254 700 000000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Link to Children (hold Ctrl/Cmd to select multiple)</label>
+                    <select id="student_ids" multiple>
+                        <option value="">Loading students...</option>
+                    </select>
+                    <div id="studentsError" class="error"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Parent Account</button>
+                <div id="formMessage" class="mt-20"></div>
+            </form>
+        </div>
+
+        <!-- Parent List -->
+        <div class="card">
+            <h2>All Parent Accounts</h2>
+            <div id="parentsList">
+                <p>Loading parents...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        // Get token from localStorage
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        // Check if user is logged in
+        function checkAuth() {
+            const token = getToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Load students for dropdown
+        async function loadStudents() {
+            try {
+                const token = getToken();
+                if (!token) return;
+
+                // ✅ FIXED: Use /parent-students instead of /students
+                const res = await fetch(`${API_URL}/parent-students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to load students');
+                }
+
+                const students = await res.json();
+                const select = document.getElementById('student_ids');
+                select.innerHTML = '';
+
+                if (students && students.length > 0) {
+                    students.forEach(student => {
+                        const option = document.createElement('option');
+                        option.value = student.id;
+                        option.textContent = `${student.name} (${student.admission_number || 'N/A'})`;
+                        select.appendChild(option);
+                    });
+                    document.getElementById('studentsError').textContent = '';
+                } else {
+                    select.innerHTML = '<option value="">No students available</option>';
+                    document.getElementById('studentsError').textContent = 'No students found. Please add students first.';
+                }
+            } catch (error) {
+                console.error('Error loading students:', error);
+                document.getElementById('studentsError').textContent = 'Error loading students: ' + error.message;
+            }
+        }
+
+        // Load parents list
+        async function loadParents() {
+            try {
+                const token = getToken();
+                if (!token) return;
+
+                const res = await fetch(`${API_URL}/parent-accounts`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to load parents');
+                }
+
+                const parents = await res.json();
+                const container = document.getElementById('parentsList');
+
+                if (!parents || parents.length === 0) {
+                    container.innerHTML = '<p>No parent accounts found</p>';
+                    return;
+                }
+
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Children</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                parents.forEach(parent => {
+                    html += `
+                        <tr>
+                            <td>${parent.full_name}</td>
+                            <td>${parent.email}</td>
+                            <td>${parent.phone || 'N/A'}</td>
+                            <td>${parent.children_names || 'None'}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteParent(${parent.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += `</tbody></table>`;
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading parents:', error);
+                document.getElementById('parentsList').innerHTML = `<p class="error">Error loading parents: ${error.message}</p>`;
+            }
+        }
+
+        // Create parent account
+        document.getElementById('createParentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const token = getToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const full_name = document.getElementById('full_name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim() || Math.random().toString(36).slice(-8);
+            const phone = document.getElementById('phone').value.trim();
+            const select = document.getElementById('student_ids');
+            const student_ids = Array.from(select.selectedOptions).map(opt => parseInt(opt.value));
+
+            if (!full_name || !email) {
+                document.getElementById('formMessage').innerHTML = '<p class="error">Full name and email are required</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/create-parent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ full_name, email, password, phone, student_ids })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('formMessage').innerHTML = `<p class="success">✅ ${data.message}</p>`;
+                    document.getElementById('createParentForm').reset();
+                    await loadParents();
+                    await loadStudents();
+                } else {
+                    document.getElementById('formMessage').innerHTML = `<p class="error">❌ ${data.message}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('formMessage').innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        });
+
+        // Delete parent
+        async function deleteParent(id) {
+            if (!confirm('Are you sure you want to delete this parent account?')) return;
+
+            const token = getToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/delete-parent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ id })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    await loadParents();
+                } else {
+                    alert('Error deleting parent: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Initialize page
+        if (checkAuth()) {
+            loadStudents();
+            loadParents();
+        }
+    </script>
+</body>
+</html>

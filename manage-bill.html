@@ -18,7 +18,7 @@
         }
         .logo { display: flex; align-items: center; gap: 15px; }
         .logo img { height: 50px; }
-        .logo h1 { color: #8DB600; }
+        .logo h1 { color: #8DB600; font-size: 22px; }
         .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
         .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
         
@@ -41,11 +41,12 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             box-sizing: border-box;
+            font-family: inherit;
         }
         
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
         
@@ -62,66 +63,83 @@
         .btn-danger { background: #f44336; }
         .btn-danger:hover { background: #d32f2f; }
         .btn-success { background: #4caf50; }
-        .btn-success:hover { background: #388E3C; }
+        .btn-success:hover { background: #388e3c; }
+        .btn-warning { background: #ff9800; }
+        .btn-warning:hover { background: #e68900; }
         
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: #8DB600; color: white; }
         
-        .status-paid { color: #4caf50; font-weight: bold; }
-        .status-pending { color: #f44336; font-weight: bold; }
-        .status-partial { color: #FF9800; font-weight: bold; }
-        
-        /* ===== STYLED STATS CARDS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: white;
-            padding: 25px 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            border-left: 5px solid #8DB600;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-3px);
-        }
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #8DB600;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .stat-card .number.green { color: #4caf50; }
-        .stat-card .number.red { color: #f44336; }
-        .stat-card .number.blue { color: #2196F3; }
-        .stat-card .number.orange { color: #FF9800; }
-        .stat-card .label {
-            font-size: 13px;
-            color: #666;
-            font-weight: 500;
-        }
-        .stat-card .sub-label {
-            font-size: 11px;
-            color: #999;
-            margin-top: 3px;
-        }
-        
         .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
         .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
         .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
         
-        .action-btn { padding: 5px 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin: 2px; }
-        .action-btn.paid { background: #4caf50; color: white; }
-        .action-btn.pending { background: #f44336; color: white; }
-        .action-btn.delete { background: #666; color: white; }
-        .action-btn.delete:hover { background: #444; }
+        .badge { 
+            display: inline-block; 
+            padding: 3px 10px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 600; 
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+        .actions button { padding: 5px 12px; font-size: 12px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-edit { background: #2196F3; color: white; }
+        .btn-edit:hover { background: #1976D2; }
+        .btn-delete { background: #f44336; color: white; }
+        .btn-delete:hover { background: #d32f2f; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-box h3 { font-size: 28px; color: #8DB600; }
+        .stat-box .currency { font-size: 14px; color: #666; }
+        .stat-box p { color: #666; font-size: 14px; margin-top: 5px; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px; right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .modal h2 { color: #8DB600; margin-bottom: 20px; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -137,50 +155,49 @@
         <div id="successMsg" class="success-msg"></div>
         <div id="errorMsg" class="error-msg"></div>
         
-        <!-- STYLED STATS CARDS -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="number blue" id="totalFees">0</span>
-                <div class="label">Total Fees</div>
-                <div class="sub-label">KSh</div>
-            </div>
-            <div class="stat-card">
-                <span class="number green" id="totalPaid">0</span>
-                <div class="label">Amount Paid</div>
-                <div class="sub-label">KSh</div>
-            </div>
-            <div class="stat-card">
-                <span class="number red" id="totalPending">0</span>
-                <div class="label">Amount Pending</div>
-                <div class="sub-label">KSh</div>
-            </div>
-            <div class="stat-card">
-                <span class="number orange" id="totalRecords">0</span>
-                <div class="label">Total Records</div>
-                <div class="sub-label">Fee Entries</div>
+        <!-- Stats -->
+        <div class="card">
+            <h2>📊 Fee Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h3 id="totalFees">0</h3>
+                    <p>Total Fees</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="amountPaid">KSh 0</h3>
+                    <p>Amount Paid</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="amountPending">KSh 0</h3>
+                    <p>Amount Pending</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="totalRecords">0</h3>
+                    <p>Total Records</p>
+                </div>
             </div>
         </div>
         
-        <!-- Add Fee Form -->
+        <!-- Add Fee Record -->
         <div class="card">
-            <h2>Add Fee Record</h2>
+            <h2>💰 Add Fee Record</h2>
+            <div class="form-group">
+                <label>Student Name</label>
+                <select id="studentSelect">
+                    <option value="">Select student...</option>
+                </select>
+            </div>
             <div class="form-row">
-                <div class="form-group">
-                    <label>Student Name</label>
-                    <select id="studentSelect">
-                        <option value="">Select student</option>
-                    </select>
-                </div>
                 <div class="form-group">
                     <label>Amount (KSh)</label>
                     <input type="number" id="feeAmount" placeholder="Enter amount">
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group">
                     <label>Due Date</label>
                     <input type="date" id="feeDueDate">
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label>Term</label>
                     <select id="feeTerm">
@@ -194,16 +211,16 @@
                     <select id="feeStatus">
                         <option value="Pending">Pending</option>
                         <option value="Paid">Paid</option>
-                        <option value="Partial">Partial</option>
+                        <option value="Overdue">Overdue</option>
                     </select>
                 </div>
             </div>
             <button class="btn" onclick="addFee()">Add Fee Record</button>
         </div>
         
-        <!-- Fee Records Table -->
+        <!-- Fee Records -->
         <div class="card">
-            <h2>Fee Records</h2>
+            <h2>📋 Fee Records</h2>
             <div style="overflow-x:auto;">
                 <table>
                     <thead>
@@ -218,7 +235,7 @@
                         </tr>
                     </thead>
                     <tbody id="feeTable">
-                        <tr><td colspan="7" style="text-align:center;">Loading fees...</td></tr>
+                        <tr><td colspan="7" style="text-align:center;color:#999;">Loading fees...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -227,8 +244,47 @@
         <div class="footer"><p>Dawamu School Management System | Transforming Boys Into Leaders</p></div>
     </div>
     
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeEditModal()">&times;</span>
+            <h2>✏️ Edit Fee Record</h2>
+            <input type="hidden" id="editFeeId">
+            <div class="form-group">
+                <label>Student Name</label>
+                <input type="text" id="editStudentName" readonly style="background:#f5f5f5;">
+            </div>
+            <div class="form-group">
+                <label>Amount (KSh)</label>
+                <input type="number" id="editAmount">
+            </div>
+            <div class="form-group">
+                <label>Due Date</label>
+                <input type="date" id="editDueDate">
+            </div>
+            <div class="form-group">
+                <label>Term</label>
+                <select id="editTerm">
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Term 3">Term 3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="editStatus">
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Overdue">Overdue</option>
+                </select>
+            </div>
+            <button class="btn" onclick="updateFee()">Update Fee Record</button>
+        </div>
+    </div>
+    
     <script>
         const API_URL = 'http://localhost:5000/api';
+        let allFees = [];
         
         function getToken() { return localStorage.getItem('token'); }
         
@@ -256,203 +312,292 @@
             setTimeout(() => { el.style.display = 'none'; }, 4000);
         }
         
-        // Set default date (30 days from now)
-        function setDefaultDate() {
-            const defaultDate = new Date();
-            defaultDate.setDate(defaultDate.getDate() + 30);
-            document.getElementById('feeDueDate').value = defaultDate.toISOString().split('T')[0];
-        }
-        
         // Load students for dropdown
         async function loadStudents() {
             try {
+                const token = getToken();
                 const res = await fetch(`${API_URL}/students`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
+                
                 const students = await res.json();
                 const select = document.getElementById('studentSelect');
-                select.innerHTML = '<option value="">Select student</option>';
+                select.innerHTML = '<option value="">Select student...</option>';
+                
                 if (students && students.length > 0) {
                     students.forEach(s => {
-                        select.innerHTML += `<option value="${s.id}" data-name="${s.name}">${s.name} - ${s.grade}</option>`;
+                        const option = document.createElement('option');
+                        option.value = s.id;
+                        option.textContent = `${s.name} (${s.admission_number || 'N/A'})`;
+                        select.appendChild(option);
                     });
-                } else {
-                    select.innerHTML = '<option value="">No students found</option>';
                 }
             } catch(err) {
-                console.error('Error:', err);
-                document.getElementById('studentSelect').innerHTML = '<option value="">Error loading students</option>';
+                console.error('Error loading students:', err);
             }
         }
         
-        // Load fees
-        async function loadFees() {
-            try {
-                const res = await fetch(`${API_URL}/fees`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                const fees = await res.json();
-                const tbody = document.getElementById('feeTable');
-                
-                if (!fees || fees.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">No fee records found</td></tr>';
-                    updateStats(0, 0, 0, 0);
-                    return;
-                }
-                
-                tbody.innerHTML = '';
-                let totalAmount = 0;
-                let totalPaid = 0;
-                let totalPending = 0;
-                
-                fees.forEach(f => {
-                    const statusClass = f.status === 'Paid' ? 'status-paid' : 
-                                      f.status === 'Pending' ? 'status-pending' : 'status-partial';
-                    
-                    totalAmount += f.amount || 0;
-                    if (f.status === 'Paid') totalPaid += f.amount || 0;
-                    else if (f.status === 'Pending') totalPending += f.amount || 0;
-                    
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><strong>${f.student_name || 'N/A'}</strong></td>
-                            <td>KSh ${(f.amount || 0).toLocaleString()}</td>
-                            <td>${f.due_date || 'N/A'}</td>
-                            <td>${f.term || 'N/A'}</td>
-                            <td>${f.year || 'N/A'}</td>
-                            <td class="${statusClass}">${f.status || 'N/A'}</td>
-                            <td>
-                                ${f.status !== 'Paid' ? `<button class="action-btn paid" onclick="updateFeeStatus(${f.id}, 'Paid')">Mark Paid</button>` : ''}
-                                ${f.status !== 'Pending' ? `<button class="action-btn pending" onclick="updateFeeStatus(${f.id}, 'Pending')">Mark Pending</button>` : ''}
-                                <button class="action-btn delete" onclick="deleteFee(${f.id})">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                updateStats(totalAmount, totalPaid, totalPending, fees.length);
-                
-            } catch(err) {
-                console.error('Error:', err);
-                document.getElementById('feeTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#f44336;">Error loading fees</td></tr>';
-            }
-        }
-        
-        function updateStats(totalAmount, totalPaid, totalPending, totalRecords) {
-            document.getElementById('totalFees').textContent = (totalAmount || 0).toLocaleString();
-            document.getElementById('totalPaid').textContent = (totalPaid || 0).toLocaleString();
-            document.getElementById('totalPending').textContent = (totalPending || 0).toLocaleString();
-            document.getElementById('totalRecords').textContent = totalRecords || 0;
-        }
-        
-        // Add fee
+        // Add Fee - Updated with student_id
         async function addFee() {
-            const select = document.getElementById('studentSelect');
-            const studentId = select.value;
-            const studentName = select.options[select.selectedIndex]?.getAttribute('data-name') || '';
+            const studentSelect = document.getElementById('studentSelect');
+            const studentId = studentSelect.value;
+            const studentName = studentSelect.options[studentSelect.selectedIndex]?.text || '';
             const amount = document.getElementById('feeAmount').value;
-            const dueDate = document.getElementById('feeDueDate').value;
+            const due_date = document.getElementById('feeDueDate').value;
             const term = document.getElementById('feeTerm').value;
             const status = document.getElementById('feeStatus').value;
+            const year = new Date().getFullYear();
             
-            if (!studentId) {
-                showError('Please select a student');
-                return;
-            }
-            if (!amount || amount <= 0) {
-                showError('Please enter a valid amount');
-                return;
-            }
-            if (!dueDate) {
-                showError('Please select a due date');
+            if (!studentId || !amount || !due_date) {
+                showError('Please fill in all required fields');
                 return;
             }
             
             try {
+                const token = getToken();
                 const res = await fetch(`${API_URL}/add-fee`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getToken()}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
+                        student_id: parseInt(studentId),
                         student_name: studentName,
                         amount: parseFloat(amount),
-                        due_date: dueDate,
-                        status: status,
-                        term: term,
-                        year: new Date().getFullYear()
+                        due_date,
+                        term,
+                        status,
+                        year
                     })
                 });
-                const data = await res.json();
                 
+                const data = await res.json();
                 if (data.success) {
-                    showSuccess('Fee record added successfully!');
-                    loadFees();
+                    showSuccess('✅ Fee record added successfully!');
                     document.getElementById('feeAmount').value = '';
-                    setDefaultDate();
-                } else {
-                    showError('Error: ' + data.message);
-                }
-            } catch(err) {
-                showError('Error: ' + err.message);
-            }
-        }
-        
-        // Update fee status
-        async function updateFeeStatus(id, status) {
-            try {
-                const res = await fetch(`${API_URL}/update-fee-status/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getToken()}`
-                    },
-                    body: JSON.stringify({ status })
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    showSuccess('Fee marked as ' + status);
+                    document.getElementById('feeDueDate').value = '';
                     loadFees();
+                    updateStats();
                 } else {
-                    showError('Error: ' + data.message);
+                    showError('❌ Error: ' + data.message);
                 }
             } catch(err) {
-                showError('Error: ' + err.message);
+                showError('❌ Error: ' + err.message);
             }
         }
         
-        // Delete fee
+        // Load Fees
+        async function loadFees() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/fees`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!res.ok) throw new Error('Failed to load fees');
+                
+                allFees = await res.json();
+                renderFees(allFees);
+            } catch(err) {
+                console.error('Error loading fees:', err);
+                document.getElementById('feeTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#f44336;">Error loading fees</td></tr>';
+            }
+        }
+        
+        // Render Fees
+        function renderFees(fees) {
+            const tbody = document.getElementById('feeTable');
+            
+            if (!fees || fees.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="icon">💰</div>
+                                <p>No fee records found. Add your first fee record!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            fees.forEach(fee => {
+                const tr = document.createElement('tr');
+                const statusClass = fee.status === 'Paid' ? 'badge-success' : 
+                                   fee.status === 'Overdue' ? 'badge-danger' : 'badge-warning';
+                
+                tr.innerHTML = `
+                    <td><strong>${fee.student_name || 'Unknown'}</strong></td>
+                    <td>KSh ${parseFloat(fee.amount || 0).toLocaleString()}</td>
+                    <td>${fee.due_date || 'N/A'}</td>
+                    <td>${fee.term || 'N/A'}</td>
+                    <td>${fee.year || 'N/A'}</td>
+                    <td><span class="badge ${statusClass}">${fee.status || 'Pending'}</span></td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-edit" onclick="openEditModal(${fee.id})">✏️ Edit</button>
+                            <button class="btn-delete" onclick="deleteFee(${fee.id})">🗑️ Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Delete Fee
         async function deleteFee(id) {
             if (!confirm('Are you sure you want to delete this fee record?')) return;
             
             try {
+                const token = getToken();
                 const res = await fetch(`${API_URL}/delete-fee/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = await res.json();
                 
+                const data = await res.json();
                 if (data.success) {
-                    showSuccess('Fee record deleted successfully');
+                    showSuccess('✅ Fee record deleted successfully!');
                     loadFees();
+                    updateStats();
                 } else {
-                    showError('Error: ' + data.message);
+                    showError('❌ Error: ' + data.message);
                 }
             } catch(err) {
-                showError('Error: ' + err.message);
+                showError('❌ Error: ' + err.message);
             }
         }
         
-        // Auto-refresh every 30 seconds
-        setInterval(loadFees, 30000);
+        // Open Edit Modal
+        async function openEditModal(id) {
+            try {
+                const fee = allFees.find(f => f.id === id);
+                if (fee) {
+                    document.getElementById('editFeeId').value = fee.id;
+                    document.getElementById('editStudentName').value = fee.student_name || '';
+                    document.getElementById('editAmount').value = fee.amount || '';
+                    document.getElementById('editDueDate').value = fee.due_date || '';
+                    document.getElementById('editTerm').value = fee.term || 'Term 1';
+                    document.getElementById('editStatus').value = fee.status || 'Pending';
+                    document.getElementById('editModal').style.display = 'block';
+                }
+            } catch(err) {
+                showError('Error loading fee details');
+            }
+        }
         
+        // Close Edit Modal
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        // Update Fee - Updated with student_id
+        async function updateFee() {
+            const id = document.getElementById('editFeeId').value;
+            const student_name = document.getElementById('editStudentName').value;
+            const amount = document.getElementById('editAmount').value;
+            const due_date = document.getElementById('editDueDate').value;
+            const term = document.getElementById('editTerm').value;
+            const status = document.getElementById('editStatus').value;
+            const year = new Date().getFullYear();
+            
+            // Get student_id from the original record
+            const fee = allFees.find(f => f.id === parseInt(id));
+            if (!fee) {
+                showError('Fee record not found');
+                return;
+            }
+            
+            if (!amount || !due_date) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/update-fee/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        student_id: fee.student_id || 1,
+                        student_name: student_name,
+                        amount: parseFloat(amount),
+                        due_date,
+                        term,
+                        status,
+                        year
+                    })
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess('✅ Fee record updated successfully!');
+                    closeEditModal();
+                    loadFees();
+                    updateStats();
+                } else {
+                    showError('❌ Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('❌ Error: ' + err.message);
+            }
+        }
+        
+        // Update Stats
+        async function updateStats() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/fees`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const fees = await res.json();
+                
+                let totalFees = 0;
+                let amountPaid = 0;
+                let amountPending = 0;
+                
+                if (fees && fees.length > 0) {
+                    fees.forEach(f => {
+                        const amount = parseFloat(f.amount) || 0;
+                        totalFees += amount;
+                        if (f.status === 'Paid') {
+                            amountPaid += amount;
+                        } else {
+                            amountPending += amount;
+                        }
+                    });
+                }
+                
+                document.getElementById('totalFees').textContent = fees ? fees.length : 0;
+                document.getElementById('amountPaid').textContent = 'KSh ' + amountPaid.toLocaleString();
+                document.getElementById('amountPending').textContent = 'KSh ' + amountPending.toLocaleString();
+                document.getElementById('totalRecords').textContent = fees ? fees.length : 0;
+            } catch(err) {
+                console.error('Error updating stats:', err);
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        };
+        
+        // Initialize
         window.onload = function() {
             checkLogin();
             loadStudents();
             loadFees();
-            setDefaultDate();
+            updateStats();
         };
     </script>
 </body>

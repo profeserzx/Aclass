@@ -276,7 +276,7 @@
             if (!token) return;
             
             try {
-                const res = await fetch(`${API_URL}/students`, {
+                const res = await fetch(${API_URL}/parent-students, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 allStudents = await res.json();

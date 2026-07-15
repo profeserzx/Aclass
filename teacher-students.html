@@ -223,7 +223,7 @@
                 return;
             }
             
-            fetch(`${API_URL}/students`, {
+            fetch(${API_URL}/parent-students, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -271,7 +271,7 @@
             students.forEach(s => {
                 tbody.innerHTML += `
                     <tr>
-                        <td>${s.admission_no || 'N/A'}</td>
+                        <td>${s.admission_number || 'N/A'}</td>
                         <td><strong>${s.name || 'N/A'}</strong></td>
                         <td>${s.grade || 'N/A'}</td>
                         <td>${s.parent_phone || 'N/A'}</td>
@@ -294,7 +294,7 @@
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allStudents.filter(s => 
                 (s.name && s.name.toLowerCase().includes(query)) || 
-                (s.admission_no && s.admission_no.toLowerCase().includes(query))
+                (s.admission_number && s.admission_number.toLowerCase().includes(query))
             );
             displayStudents(filtered);
         }

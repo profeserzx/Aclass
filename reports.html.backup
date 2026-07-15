@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dawamu School - Reports</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
+        
+        .header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #8DB600;
+        }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo img { height: 50px; }
+        .logo h1 { color: #8DB600; font-size: 22px; }
+        .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .btn {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #6B8E00; }
+        .btn-secondary { background: #2196F3; }
+        .btn-secondary:hover { background: #1976D2; }
+        .btn-success { background: #4caf50; }
+        .btn-success:hover { background: #388e3c; }
+        
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+        .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        
+        /* Report Preview Styles */
+        #reportPreview {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #8DB600;
+        }
+        
+        #reportPreview .report-header {
+            text-align: center;
+            border-bottom: 3px solid #8DB600;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        
+        #reportPreview .report-header h1 {
+            color: #1a7a3a;
+            font-size: 28px;
+        }
+        
+        #reportPreview .report-header .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        #reportPreview .student-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        #reportPreview .student-info table {
+            width: 100%;
+            border: none;
+        }
+        
+        #reportPreview .student-info td {
+            padding: 5px 10px;
+            border: none;
+        }
+        
+        #reportPreview .student-info .label {
+            font-weight: 600;
+            color: #555;
+            width: 120px;
+        }
+        
+        #reportPreview table.results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        #reportPreview table.results-table th {
+            background: #8DB600;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        #reportPreview table.results-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        #reportPreview table.results-table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        #reportPreview .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        #reportPreview .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        #reportPreview .summary-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        #reportPreview .summary-item .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #8DB600;
+        }
+        
+        #reportPreview .summary-item .label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        #reportPreview .report-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .header, .back-btn, .logout-btn, .card .btn, .btn-group, .no-print {
+                display: none !important;
+            }
+            #reportPreview {
+                display: block !important;
+                border: none !important;
+                padding: 20px !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+            }
+            .container { margin: 0 !important; padding: 0 !important; }
+            .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+            body { background: white !important; }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .loading .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #8DB600;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        
+        .student-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .student-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .student-item:hover {
+            background: #f0f5e6;
+        }
+        .student-item.selected {
+            background: #8DB600;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="images/Logo.png" alt="Logo"><h1>DAWAMU SCHOOL - Reports</h1></div>
+        <div>
+            <a href="admin-dashboard.html" class="back-btn">← Back</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="successMsg" class="success-msg"></div>
+        <div id="errorMsg" class="error-msg"></div>
+        
+        <!-- Report Generator -->
+        <div class="card">
+            <h2>📊 Generate Report</h2>
+            <div class="form-group">
+                <label>Report Type</label>
+                <select id="reportType">
+                    <option value="performance">Student Performance Report</option>
+                    <option value="fee">Fee Report</option>
+                    <option value="attendance">Attendance Report</option>
+                    <option value="summary">School Summary Report</option>
+                </select>
+            </div>
+            <div class="form-group" id="studentSelectGroup">
+                <label>Select Student</label>
+                <select id="studentSelect">
+                    <option value="">Loading students...</option>
+                </select>
+            </div>
+            <div class="btn-group no-print">
+                <button class="btn" onclick="generateReport()">📄 Generate Report</button>
+                <button class="btn btn-success" onclick="printReport()" id="printBtn" style="display:none;">🖨️ Print / PDF</button>
+                <button class="btn btn-secondary" onclick="downloadReport()" id="downloadBtn" style="display:none;">💾 Download HTML</button>
+            </div>
+        </div>
+        
+        <!-- Report Preview -->
+        <div id="reportPreview"></div>
+        
+        <div class="footer"><p>Dawamu School Management System | "Transforming Boys Into Leaders"</p></div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let allStudents = [];
+        
+        function getToken() { 
+            const token = localStorage.getItem('token');
+            console.log('Token exists:', !!token);
+            return token; 
+        }
+        
+        function checkLogin() {
+            const token = getToken();
+            if (!token) {
+                console.log('No token found, redirecting to login');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        
+        // Load students for dropdown
+        async function loadStudents() {
+            console.log('Loading students...');
+            const select = document.getElementById('studentSelect');
+            select.innerHTML = '<option value="">Loading students...</option>';
+            
+            try {
+                const token = getToken();
+                if (!token) {
+                    select.innerHTML = '<option value="">Please login first</option>';
+                    return;
+                }
+                
+                console.log('Fetching students from API...');
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                console.log('Response status:', res.status);
+                
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    console.error('API Error:', errorText);
+                    throw new Error(`Failed to load students: ${res.status}`);
+                }
+                
+                allStudents = await res.json();
+                console.log('Students loaded:', allStudents);
+                
+                select.innerHTML = '<option value="">Select a student...</option>';
+                
+                if (allStudents && allStudents.length > 0) {
+                    allStudents.forEach(s => {
+                        const option = document.createElement('option');
+                        option.value = s.id;
+                        option.textContent = `${s.name} (${s.admission_number || 'N/A'}) - ${s.grade || 'N/A'}`;
+                        select.appendChild(option);
+                    });
+                    console.log(`Added ${allStudents.length} students to dropdown`);
+                    showSuccess(`✅ Loaded ${allStudents.length} students`);
+                } else {
+                    select.innerHTML = '<option value="">No students found</option>';
+                    showError('No students found in database');
+                }
+            } catch(err) {
+                console.error('Error loading students:', err);
+                select.innerHTML = '<option value="">Error loading students</option>';
+                showError('Failed to load students: ' + err.message);
+            }
+        }
+        
+        // Generate Report
+        async function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const studentId = document.getElementById('studentSelect').value;
+            const studentSelect = document.getElementById('studentSelect');
+            const studentName = studentSelect.options[studentSelect.selectedIndex]?.text || '';
+            
+            if (reportType === 'performance' && !studentId) {
+                showError('Please select a student');
+                return;
+            }
+            
+            const previewDiv = document.getElementById('reportPreview');
+            previewDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Generating report...</p></div>';
+            previewDiv.style.display = 'block';
+            
+            document.getElementById('printBtn').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'none';
+            
+            try {
+                const token = getToken();
+                if (!token) {
+                    showError('Please login first');
+                    return;
+                }
+                
+                if (reportType === 'performance') {
+                    // Get student details
+                    const student = allStudents.find(s => s.id === parseInt(studentId));
+                    
+                    if (!student) {
+                        previewDiv.innerHTML = '<div class="error-msg" style="display:block;">❌ Student not found</div>';
+                        return;
+                    }
+                    
+                    // Get student results
+                    const resultsRes = await fetch(`${API_URL}/student-results/${studentId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const results = await resultsRes.json();
+                    
+                    renderPerformanceReport(student, results);
+                    
+                } else if (reportType === 'fee') {
+                    const feesRes = await fetch(`${API_URL}/fees`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const fees = await feesRes.json();
+                    renderFeeReport(fees);
+                    
+                } else if (reportType === 'attendance') {
+                    const attendanceRes = await fetch(`${API_URL}/attendance/${studentId || 1}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const attendance = await attendanceRes.json();
+                    renderAttendanceReport(attendance);
+                    
+                } else if (reportType === 'summary') {
+                    const statsRes = await fetch(`${API_URL}/stats`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const stats = await statsRes.json();
+                    
+                    const studentsRes = await fetch(`${API_URL}/students`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const students = await studentsRes.json();
+                    
+                    renderSummaryReport(stats, students);
+                }
+                
+                document.getElementById('printBtn').style.display = 'inline-block';
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+                showSuccess('✅ Report generated successfully!');
+                
+            } catch(err) {
+                console.error('Error generating report:', err);
+                previewDiv.innerHTML = `<div class="error-msg" style="display:block;">❌ Error generating report: ${err.message}</div>`;
+                showError('Error generating report: ' + err.message);
+            }
+        }
+        
+        // Render Performance Report
+        function renderPerformanceReport(student, results) {
+            const previewDiv = document.getElementById('reportPreview');
+            
+            let totalMarks = 0;
+            let subjectCount = results ? results.length : 0;
+            
+            if (results && results.length > 0) {
+                results.forEach(r => totalMarks += parseFloat(r.marks) || 0);
+            }
+            
+            const average = subjectCount > 0 ? (totalMarks / subjectCount).toFixed(1) : 'N/A';
+            const grade = getGrade(parseFloat(average));
+            
+            let resultsHtml = '';
+            if (results && results.length > 0) {
+                results.forEach(r => {
+                    const mark = parseFloat(r.marks) || 0;
+                    const gradeClass = mark >= 80 ? 'badge-success' : mark >= 50 ? 'badge-warning' : 'badge-danger';
+                    resultsHtml += `
+                        <tr>
+                            <td>${r.subject_name || 'N/A'}</td>
+                            <td>${r.marks || 0}</td>
+                            <td><span class="badge ${gradeClass}">${getGrade(mark)}</span></td>
+                            <td>${r.exam_type || 'End Term'}</td>
+                            <td>${r.term || 'N/A'}</td>
+                            <td>${r.year || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                resultsHtml = `<tr><td colspan="6" style="text-align:center;color:#999;">No results found for this student</td></tr>`;
+            }
+            
+            previewDiv.innerHTML = `
+                <div class="report-header">
+                    <h1>🏫 DAWAMU SCHOOL</h1>
+                    <p class="subtitle">Transforming Boys Into Leaders</p>
+                    <p style="margin-top:10px;font-size:18px;font-weight:600;color:#1a7a3a;">STUDENT PERFORMANCE REPORT</p>
+                </div>
+                
+                <div class="student-info">
+                    <table>
+                        <tr><td class="label">Student Name:</td><td><strong>${student.name}</strong></td></tr>
+                        <tr><td class="label">Admission No:</td><td>${student.admission_number || 'N/A'}</td></tr>
+                        <tr><td class="label">Grade/Class:</td><td>${student.grade || 'N/A'}</td></tr>
+                        <tr><td class="label">Parent Email:</td><td>${student.parent_email || 'N/A'}</td></tr>
+                        <tr><td class="label">Parent Phone:</td><td>${student.parent_phone || 'N/A'}</td></tr>
+                    </table>
+                </div>
+                
+                <h3 style="color:#1a7a3a;margin-bottom:10px;">📚 Academic Results</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                            <th>Exam Type</th>
+                            <th>Term</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${resultsHtml}
+                    </tbody>
+                </table>
+                
+                <div class="summary">
+                    <h4 style="color:#1a7a3a;margin-bottom:10px;">📊 Performance Summary</h4>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="value">${subjectCount}</div>
+                            <div class="label">Subjects</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${average}</div>
+                            <div class="label">Average Score</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${grade}</div>
+                            <div class="label">Overall Grade</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${totalMarks}</div>
+                            <div class="label">Total Marks</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="report-footer">
+                    <p>Report Generated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    <p>© 2026 Dawamu School. All rights reserved.</p>
+                </div>
+            `;
+        }
+        
+        // Render Fee Report
+        function renderFeeReport(fees) {
+            const previewDiv = document.getElementById('reportPreview');
+            
+            let totalFees = 0;
+            let totalPaid = 0;
+            let totalPending = 0;
+            
+            if (fees && fees.length > 0) {
+                fees.forEach(f => {
+                    const amount = parseFloat(f.amount) || 0;
+                    totalFees += amount;
+                    if (f.status === 'Paid') totalPaid += amount;
+                    else totalPending += amount;
+                });
+            }
+            
+            let feesHtml = '';
+            if (fees && fees.length > 0) {
+                fees.forEach(f => {
+                    const statusClass = f.status === 'Paid' ? 'badge-success' : 
+                                       f.status === 'Overdue' ? 'badge-danger' : 'badge-warning';
+                    feesHtml += `
+                        <tr>
+                            <td>${f.student_name || 'N/A'}</td>
+                            <td>KSh ${parseFloat(f.amount || 0).toLocaleString()}</td>
+                            <td>${f.due_date || 'N/A'}</td>
+                            <td>${f.term || 'N/A'}</td>
+                            <td>${f.year || 'N/A'}</td>
+                            <td><span class="badge ${statusClass}">${f.status || 'Pending'}</span></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                feesHtml = `<tr><td colspan="6" style="text-align:center;color:#999;">No fee records found</td></tr>`;
+            }
+            
+            previewDiv.innerHTML = `
+                <div class="report-header">
+                    <h1>🏫 DAWAMU SCHOOL</h1>
+                    <p class="subtitle">Transforming Boys Into Leaders</p>
+                    <p style="margin-top:10px;font-size:18px;font-weight:600;color:#1a7a3a;">FEE REPORT</p>
+                </div>
+                
+                <div class="summary">
+                    <h4 style="color:#1a7a3a;margin-bottom:10px;">📊 Fee Summary</h4>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="value">${fees ? fees.length : 0}</div>
+                            <div class="label">Total Records</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">KSh ${totalFees.toLocaleString()}</div>
+                            <div class="label">Total Fees</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">KSh ${totalPaid.toLocaleString()}</div>
+                            <div class="label">Amount Paid</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">KSh ${totalPending.toLocaleString()}</div>
+                            <div class="label">Amount Pending</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="color:#1a7a3a;margin:20px 0 10px;">📋 Fee Records</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Term</th>
+                            <th>Year</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${feesHtml}
+                    </tbody>
+                </table>
+                
+                <div class="report-footer">
+                    <p>Report Generated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    <p>© 2026 Dawamu School. All rights reserved.</p>
+                </div>
+            `;
+        }
+        
+        // Render Attendance Report
+        function renderAttendanceReport(attendance) {
+            const previewDiv = document.getElementById('reportPreview');
+            
+            let present = 0;
+            let absent = 0;
+            let late = 0;
+            let excused = 0;
+            
+            if (attendance && attendance.length > 0) {
+                attendance.forEach(a => {
+                    if (a.status === 'Present') present++;
+                    else if (a.status === 'Absent') absent++;
+                    else if (a.status === 'Late') late++;
+                    else if (a.status === 'Excused') excused++;
+                });
+            }
+            
+            let attendanceHtml = '';
+            if (attendance && attendance.length > 0) {
+                attendance.forEach(a => {
+                    const statusClass = a.status === 'Present' ? 'badge-success' : 
+                                       a.status === 'Absent' ? 'badge-danger' : 
+                                       a.status === 'Late' ? 'badge-warning' : 'badge-info';
+                    attendanceHtml += `
+                        <tr>
+                            <td>${a.date || 'N/A'}</td>
+                            <td><span class="badge ${statusClass}">${a.status || 'N/A'}</span></td>
+                            <td>${a.notes || ''}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                attendanceHtml = `<tr><td colspan="3" style="text-align:center;color:#999;">No attendance records found</td></tr>`;
+            }
+            
+            previewDiv.innerHTML = `
+                <div class="report-header">
+                    <h1>🏫 DAWAMU SCHOOL</h1>
+                    <p class="subtitle">Transforming Boys Into Leaders</p>
+                    <p style="margin-top:10px;font-size:18px;font-weight:600;color:#1a7a3a;">ATTENDANCE REPORT</p>
+                </div>
+                
+                <div class="summary">
+                    <h4 style="color:#1a7a3a;margin-bottom:10px;">📊 Attendance Summary</h4>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="value">${attendance ? attendance.length : 0}</div>
+                            <div class="label">Total Days</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${present}</div>
+                            <div class="label">Present</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${absent}</div>
+                            <div class="label">Absent</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${late}</div>
+                            <div class="label">Late</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${excused}</div>
+                            <div class="label">Excused</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="color:#1a7a3a;margin:20px 0 10px;">📋 Attendance Records</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${attendanceHtml}
+                    </tbody>
+                </table>
+                
+                <div class="report-footer">
+                    <p>Report Generated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    <p>© 2026 Dawamu School. All rights reserved.</p>
+                </div>
+            `;
+        }
+        
+        // Render Summary Report
+        function renderSummaryReport(stats, students) {
+            const previewDiv = document.getElementById('reportPreview');
+            
+            previewDiv.innerHTML = `
+                <div class="report-header">
+                    <h1>🏫 DAWAMU SCHOOL</h1>
+                    <p class="subtitle">Transforming Boys Into Leaders</p>
+                    <p style="margin-top:10px;font-size:18px;font-weight:600;color:#1a7a3a;">SCHOOL SUMMARY REPORT</p>
+                </div>
+                
+                <div class="summary">
+                    <h4 style="color:#1a7a3a;margin-bottom:10px;">📊 School Statistics</h4>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="value">${stats.students || 0}</div>
+                            <div class="label">Total Students</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${stats.teachers || 0}</div>
+                            <div class="label">Total Staff</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${stats.results || 0}</div>
+                            <div class="label">Total Results</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="value">${students ? students.length : 0}</div>
+                            <div class="label">Enrolled Students</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="color:#1a7a3a;margin:20px 0 10px;">📋 Student List</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Admission No</th>
+                            <th>Grade</th>
+                            <th>Parent Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${students && students.length > 0 ? students.map((s, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td><strong>${s.name}</strong></td>
+                                <td>${s.admission_number || 'N/A'}</td>
+                                <td>${s.grade || 'N/A'}</td>
+                                <td>${s.parent_email || 'N/A'}</td>
+                            </tr>
+                        `).join('') : '<tr><td colspan="5" style="text-align:center;color:#999;">No students found</td></tr>'}
+                    </tbody>
+                </table>
+                
+                <div class="report-footer">
+                    <p>Report Generated: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    <p>© 2026 Dawamu School. All rights reserved.</p>
+                </div>
+            `;
+        }
+        
+        // Get Grade
+        function getGrade(score) {
+            if (score >= 80) return 'A';
+            if (score >= 70) return 'B';
+            if (score >= 60) return 'C';
+            if (score >= 50) return 'D';
+            return 'E';
+        }
+        
+        // Print Report
+        function printReport() {
+            window.print();
+        }
+        
+        // Download Report as HTML
+        function downloadReport() {
+            const reportContent = document.getElementById('reportPreview').innerHTML;
+            const fullHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Dawamu School Report</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; }
+                        ${document.querySelector('style').innerHTML}
+                        .no-print { display: none !important; }
+                        .header { display: none !important; }
+                        .back-btn { display: none !important; }
+                        .logout-btn { display: none !important; }
+                        .card .btn { display: none !important; }
+                        .btn-group { display: none !important; }
+                        #reportPreview { display: block !important; border: none !important; padding: 20px !important; }
+                        .container { margin: 0 !important; padding: 0 !important; }
+                        .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+                        body { background: white !important; }
+                    </style>
+                </head>
+                <body>
+                    ${reportContent}
+                </body>
+                </html>
+            `;
+            
+            const blob = new Blob([fullHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Dawamu_Report_${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess('✅ Report downloaded successfully!');
+        }
+        
+        // Report type change handler
+        document.getElementById('reportType').addEventListener('change', function() {
+            const studentGroup = document.getElementById('studentSelectGroup');
+            if (this.value === 'performance') {
+                studentGroup.style.display = 'block';
+            } else {
+                studentGroup.style.display = 'none';
+            }
+        });
+        
+        // Initialize
+        window.onload = function() {
+            console.log('Page loading...');
+            checkLogin();
+            loadStudents();
+            // Hide student select for non-performance reports
+            document.getElementById('studentSelectGroup').style.display = 'none';
+            console.log('Page initialized');
+        };
+    </script>
+</body>
+</html>

@@ -3,348 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dawamu School - Parent Management</title>
+    <title>Dawamu School - Manage Parents</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
-        .header {
-            background: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid #8DB600;
-        }
-        .logo { display: flex; align-items: center; gap: 15px; }
-        .logo img { height: 50px; }
-        .logo h1 { color: #8DB600; }
-        .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; }
+        .header { background: #1a7a3a; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 24px; }
+        .header-actions a { color: white; text-decoration: none; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 5px; }
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .card h2 { color: #8DB600; margin-bottom: 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        .card h2 { color: #1a7a3a; margin-bottom: 20px; border-bottom: 2px solid #e8f5e9; padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        .btn-submit {
-            background: #8DB600;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn-submit:hover { background: #6B8E00; }
-        .btn-danger { background: #f44336; }
-        .btn-danger:hover { background: #d32f2f; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .form-group select[multiple] { height: 120px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .btn { padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #1a7a3a; color: white; }
+        .btn-danger { background: #dc3545; color: white; padding: 5px 12px; font-size: 12px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #8DB600; color: white; }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border-left: 5px solid #8DB600;
-        }
-        .stat-card h3 { color: #666; font-size: 14px; }
-        .stat-card .number { font-size: 32px; font-weight: bold; color: #8DB600; }
-        .delete-btn {
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .edit-btn {
-            background: #2196f3;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .success-msg {
-            background: #4caf50;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            display: none;
-        }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background: #f8f9fa; }
+        .error { color: #dc3545; }
+        .success { color: #1a7a3a; }
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        .actions { display: flex; gap: 5px; }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo"><img src="images/Logo.png" alt="Logo"><h1>DAWAMU SCHOOL - Parent Management</h1></div>
-        <a href="admin-dashboard.html" class="back-btn">← Back</a>
-    </div>
-    
-    <div class="container">
-        <div id="successMsg" class="success-msg"></div>
-        
-        <div class="stats-grid">
-            <div class="stat-card"><h3>👥 Total Students</h3><div class="number" id="totalStudents">0</div></div>
-            <div class="stat-card"><h3>📧 With Email</h3><div class="number" id="withEmail">0</div></div>
-            <div class="stat-card"><h3>👨‍👩‍👧 With Parents</h3><div class="number" id="withParents">0</div></div>
+        <h1>🏫 DAWAMU SCHOOL - Manage Parents</h1>
+        <div class="header-actions">
+            <a href="admin-dashboard.html">← Back</a>
+            <a href="login.html" onclick="localStorage.removeItem('token');">Logout</a>
         </div>
-        
-        <!-- Add Parent Form -->
+    </div>
+
+    <div class="container">
         <div class="card">
-            <h2>➕ Add Parent Details</h2>
-            <div class="form-row">
+            <h2>Create Parent Account</h2>
+            <form id="createParentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="full_name" placeholder="Parent's full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="parent@email.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" id="password" placeholder="Auto-generate or type">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="phone" placeholder="+254 700 000000">
+                    </div>
+                </div>
                 <div class="form-group">
-                    <label>Select Student</label>
-                    <select id="studentSelect">
+                    <label>Link to Children (hold Ctrl/Cmd to select multiple)</label>
+                    <select id="student_ids" multiple>
                         <option value="">Loading students...</option>
                     </select>
+                    <div id="studentsError" class="error"></div>
                 </div>
-                <div class="form-group">
-                    <label>Parent Name</label>
-                    <input type="text" id="parentName" placeholder="Parent's full name">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Parent Email</label>
-                    <input type="email" id="parentEmail" placeholder="parent@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Parent Phone</label>
-                    <input type="text" id="parentPhone" placeholder="+254 700 000000">
-                </div>
-            </div>
-            <button class="btn-submit" onclick="addParent()">👨‍👩‍👧 Add/Update Parent</button>
+                <button type="submit" class="btn btn-primary">Create Parent Account</button>
+                <div id="formMessage" class="mt-20"></div>
+            </form>
         </div>
-        
-        <!-- Parent List -->
+
         <div class="card">
-            <h2>📋 Student & Parent List</h2>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Grade</th>
-                            <th>Parent Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="parentsList">
-                        <tr><td colspan="6" style="text-align:center; color:#666;">Loading students...</td></tr>
-                    </tbody>
-                </table>
+            <h2>All Parent Accounts</h2>
+            <div id="parentsList">
+                <p>Loading parents...</p>
             </div>
         </div>
-        
-        <div class="footer"><p>Dawamu School Management System - Parent Management</p></div>
     </div>
-    
+
+    <div class="footer">
+        <p>Dawamu School Management System | "Transforming Boys Into Leaders"</p>
+    </div>
+
     <script>
         const API_URL = 'http://localhost:5000/api';
-        
-        function getToken() { return localStorage.getItem('token'); }
-        
-        function checkLogin() {
+
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        function checkAuth() {
             const token = getToken();
-            if (!token) window.location.href = 'index.html';
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            if (user.role !== 'admin' && user.role !== 'teacher') window.location.href = 'index.html';
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
         }
-        
-        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
-        
-        function showSuccess(msg) {
-            const el = document.getElementById('successMsg');
-            el.innerText = msg;
-            el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 4000);
-        }
-        
-        // Load students for dropdown
+
         async function loadStudents() {
             try {
-                const res = await fetch(`${API_URL}/students`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                const token = getToken();
+                if (!token) return;
+
+                const res = await fetch(`${API_URL}/parent-students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = await res.json();
-                const select = document.getElementById('studentSelect');
-                select.innerHTML = '<option value="">Select Student</option>';
-                data.forEach(s => {
-                    select.innerHTML += `<option value="${s.name}">${s.name} - ${s.grade}</option>`;
-                });
-            } catch(err) {
-                console.error('Error:', err);
-                document.getElementById('studentSelect').innerHTML = '<option value="">Error loading students</option>';
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+
+                const students = await res.json();
+                const select = document.getElementById('student_ids');
+                select.innerHTML = '';
+
+                if (students && students.length > 0) {
+                    students.forEach(student => {
+                        const option = document.createElement('option');
+                        option.value = student.id;
+                        option.textContent = `${student.name} (${student.admission_number || 'N/A'})`;
+                        select.appendChild(option);
+                    });
+                    document.getElementById('studentsError').textContent = '';
+                } else {
+                    select.innerHTML = '<option value="">No students available</option>';
+                    document.getElementById('studentsError').textContent = 'No students found. Please add students first.';
+                }
+            } catch (error) {
+                console.error('Error loading students:', error);
+                document.getElementById('studentsError').textContent = 'Error loading students: ' + error.message;
+                document.getElementById('student_ids').innerHTML = '<option value="">Error loading students</option>';
             }
         }
-        
-        // Load parents list
+
         async function loadParents() {
             try {
-                const res = await fetch(`${API_URL}/students`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                const token = getToken();
+                if (!token) return;
+
+                const res = await fetch(`${API_URL}/parent-accounts`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = await res.json();
-                
-                const tbody = document.getElementById('parentsList');
-                tbody.innerHTML = '';
-                
-                let totalStudents = data.length;
-                let withEmail = 0;
-                let withParents = 0;
-                
-                data.forEach(s => {
-                    if (s.parent_email) withEmail++;
-                    if (s.parent_name) withParents++;
-                    
-                    tbody.innerHTML += `<tr>
-                        <td><strong>${s.name}</strong></td>
-                        <td>${s.grade}</td>
-                        <td>${s.parent_name || 'Not set'}</td>
-                        <td>${s.parent_email || 'Not set'}</td>
-                        <td>${s.parent_phone || 'Not set'}</td>
-                        <td>
-                            <button class="edit-btn" onclick="editParent('${s.name}')">✏️</button>
-                            <button class="delete-btn" onclick="deleteParent('${s.name}')">🗑️</button>
-                        </td>
-                    </tr>`;
-                });
-                
-                document.getElementById('totalStudents').innerText = totalStudents;
-                document.getElementById('withEmail').innerText = withEmail;
-                document.getElementById('withParents').innerText = withParents;
-                
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#666;">No students found.</td></tr>';
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
                 }
-            } catch(err) {
-                console.error('Error:', err);
-                document.getElementById('parentsList').innerHTML = '<tr><td colspan="6" style="text-align:center; color:#666;">Error loading students</td></tr>';
+
+                const parents = await res.json();
+                const container = document.getElementById('parentsList');
+
+                if (!parents || parents.length === 0) {
+                    container.innerHTML = '<p>No parent accounts found</p>';
+                    return;
+                }
+
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Children</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                parents.forEach(parent => {
+                    html += `
+                        <tr>
+                            <td><strong>${parent.full_name}</strong></td>
+                            <td>${parent.email}</td>
+                            <td>${parent.phone || 'N/A'}</td>
+                            <td>${parent.children_names || 'None'}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteParent(${parent.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += `</tbody></table>`;
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading parents:', error);
+                document.getElementById('parentsList').innerHTML = `<p class="error">Error loading parents: ${error.message}</p>`;
             }
         }
-        
-        // Add/Update parent
-        async function addParent() {
-            const studentName = document.getElementById('studentSelect').value;
-            const parentName = document.getElementById('parentName').value;
-            const parentEmail = document.getElementById('parentEmail').value;
-            const parentPhone = document.getElementById('parentPhone').value;
-            
-            if (!studentName) {
-                alert('Please select a student');
+
+        document.getElementById('createParentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const token = getToken();
+            if (!token) {
+                window.location.href = 'login.html';
                 return;
             }
-            
-            if (!parentEmail && !parentPhone && !parentName) {
-                alert('Please enter at least one field');
+
+            const full_name = document.getElementById('full_name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim() || Math.random().toString(36).slice(-8);
+            const phone = document.getElementById('phone').value.trim();
+            const select = document.getElementById('student_ids');
+            const student_ids = Array.from(select.selectedOptions).map(opt => parseInt(opt.value));
+
+            if (!full_name || !email) {
+                document.getElementById('formMessage').innerHTML = '<p class="error">Full name and email are required</p>';
                 return;
             }
-            
+
             try {
-                const res = await fetch(`${API_URL}/update-parent`, {
+                const res = await fetch(`${API_URL}/create-parent`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${getToken()}` 
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ 
-                        studentName, 
-                        parentName, 
-                        parentEmail, 
-                        parentPhone 
-                    })
+                    body: JSON.stringify({ full_name, email, password, phone, student_ids })
                 });
+
                 const data = await res.json();
                 if (data.success) {
-                    showSuccess(`✅ Parent details updated for ${studentName}!`);
-                    document.getElementById('parentName').value = '';
-                    document.getElementById('parentEmail').value = '';
-                    document.getElementById('parentPhone').value = '';
-                    loadParents();
-                    loadStudents();
+                    document.getElementById('formMessage').innerHTML = `<p class="success">✅ ${data.message}</p>`;
+                    document.getElementById('createParentForm').reset();
+                    await loadParents();
+                    await loadStudents();
                 } else {
-                    alert('Error: ' + data.message);
+                    document.getElementById('formMessage').innerHTML = `<p class="error">❌ ${data.message}</p>`;
                 }
-            } catch(err) {
-                alert('Error updating parent');
+            } catch (error) {
+                document.getElementById('formMessage').innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
             }
-        }
-        
-        // Edit parent (load data into form)
-        async function editParent(studentName) {
-            try {
-                const res = await fetch(`${API_URL}/students`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                const data = await res.json();
-                const student = data.find(s => s.name === studentName);
-                if (student) {
-                    document.getElementById('studentSelect').value = student.name;
-                    document.getElementById('parentName').value = student.parent_name || '';
-                    document.getElementById('parentEmail').value = student.parent_email || '';
-                    document.getElementById('parentPhone').value = student.parent_phone || '';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            } catch(err) { console.error('Error:', err); }
-        }
-        
-        // Delete parent data
-        async function deleteParent(studentName) {
-            if (!confirm(`Remove parent data for ${studentName}?`)) return;
-            
+        });
+
+        async function deleteParent(id) {
+            if (!confirm('Are you sure you want to delete this parent account?')) return;
+
+            const token = getToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
             try {
                 const res = await fetch(`${API_URL}/delete-parent`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${getToken()}` 
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ studentName })
+                    body: JSON.stringify({ id })
                 });
+
                 const data = await res.json();
                 if (data.success) {
-                    showSuccess(`🗑️ Parent data removed for ${studentName}`);
-                    loadParents();
+                    await loadParents();
                 } else {
-                    alert('Error: ' + data.message);
+                    alert('Error deleting parent: ' + data.message);
                 }
-            } catch(err) {
-                alert('Error deleting parent');
+            } catch (error) {
+                alert('Error: ' + error.message);
             }
         }
-        
-        window.onload = function() {
-            checkLogin();
+
+        if (checkAuth()) {
             loadStudents();
             loadParents();
-        };
+        }
     </script>
 </body>
 </html>

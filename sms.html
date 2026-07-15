@@ -223,7 +223,7 @@
         async function loadStudents() {
             try {
                 const token = getToken();
-                const res = await fetch(`${API_URL}/all-students`, {
+                const res = await fetch(`${API_URL}/parent-students`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 allStudents = await res.json();

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dawamu School - Email Notifications</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #F0F5E6; }
+        
+        .header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #8DB600;
+        }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo img { height: 50px; }
+        .logo h1 { color: #8DB600; font-size: 22px; }
+        .back-btn { background: #8DB600; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; text-decoration: none; }
+        .logout-btn { background: #f44336; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card h2 { color: #8DB600; margin-bottom: 20px; border-bottom: 2px solid #F0F5E6; padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        .form-group textarea { height: 100px; resize: vertical; }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .btn {
+            background: #8DB600;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #6B8E00; }
+        .btn-secondary { background: #2196F3; }
+        .btn-secondary:hover { background: #1976D2; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #8DB600; color: white; }
+        
+        .footer { text-align: center; padding: 20px; color: #666; margin-top: 30px; }
+        .success-msg { background: #4caf50; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        .error-msg { background: #f44336; color: white; padding: 10px; border-radius: 8px; margin: 10px 0; display: none; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-box h3 { font-size: 28px; color: #8DB600; }
+        .stat-box p { color: #666; font-size: 14px; }
+        
+        .preview-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 80px;
+            border: 2px dashed #ddd;
+            margin-top: 10px;
+        }
+        .badge { 
+            display: inline-block; 
+            padding: 3px 10px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 600; 
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><img src="images/Logo.png" alt="Logo"><h1>DAWAMU SCHOOL - Email Notifications</h1></div>
+        <div>
+            <a href="admin-dashboard.html" class="back-btn">Back</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="successMsg" class="success-msg"></div>
+        <div id="errorMsg" class="error-msg"></div>
+        
+        <!-- Stats -->
+        <div class="card">
+            <h2>📊 Email Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box"><h3 id="sentToday">0</h3><p>Sent Today</p></div>
+                <div class="stat-box"><h3 id="totalParents">0</h3><p>Total Parents</p></div>
+                <div class="stat-box"><h3 id="successRate">0%</h3><p>Success Rate</p></div>
+                <div class="stat-box"><h3 id="failedEmails">0</h3><p>Failed Emails</p></div>
+            </div>
+        </div>
+        
+        <!-- Send to Specific Parent -->
+        <div class="card">
+            <h2>Send to Specific Student's Parent</h2>
+            <div class="form-group">
+                <label>Select Student</label>
+                <select id="studentSelect">
+                    <option value="">Loading students...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Email Type</label>
+                <select id="emailType">
+                    <option value="Announcement">📢 Announcement</option>
+                    <option value="Fee Reminder">💰 Fee Reminder</option>
+                    <option value="Report Card">📊 Report Card</option>
+                    <option value="Event Invitation">🎉 Event Invitation</option>
+                    <option value="General">📝 General</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="emailSubject" placeholder="e.g., Important Announcement">
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="emailMessage" placeholder="Type your message..."></textarea>
+            </div>
+            <button class="btn" onclick="sendEmail()">Send to Parent</button>
+        </div>
+        
+        <!-- Send to All Parents -->
+        <div class="card">
+            <h2>Send to All Parents</h2>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="allSubject" placeholder="e.g., School Announcement">
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="allMessage" placeholder="Type your message..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Preview:</label>
+                <div class="preview-box" id="previewBox">Your message will appear here...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="sendEmailToAll()">Send to All Parents</button>
+        </div>
+        
+        <!-- Email History -->
+        <div class="card">
+            <h2>📧 Email History</h2>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Student</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable">
+                        <tr><td colspan="4" style="text-align:center;color:#999;">Loading email history...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer"><p>Dawamu School Management System | "Transforming Boys Into Leaders"</p></div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        
+        function getToken() { return localStorage.getItem('token'); }
+        
+        function checkLogin() {
+            const token = getToken();
+            if (!token) window.location.href = 'index.html';
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        
+        // Load students for dropdown
+        async function loadStudents() {
+            try {
+                const token = getToken();
+                if (!token) return;
+                
+                const res = await fetch(`${API_URL}/students`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!res.ok) throw new Error('Failed to load students');
+                
+                const data = await res.json();
+                const select = document.getElementById('studentSelect');
+                select.innerHTML = '<option value="">Select a student...</option>';
+                
+                if (data && data.length > 0) {
+                    data.forEach(s => {
+                        select.innerHTML += `<option value="${s.id}" data-email="${s.parent_email || ''}" data-name="${s.name}">${s.name} (${s.admission_number || 'N/A'})</option>`;
+                    });
+                } else {
+                    select.innerHTML = '<option value="">No students found</option>';
+                }
+            } catch(err) {
+                console.error('Error loading students:', err);
+                document.getElementById('studentSelect').innerHTML = '<option value="">Error loading students</option>';
+            }
+        }
+        
+        // Send email to specific parent
+        async function sendEmail() {
+            const select = document.getElementById('studentSelect');
+            const studentId = select.value;
+            const studentName = select.options[select.selectedIndex]?.getAttribute('data-name') || '';
+            const parentEmail = select.options[select.selectedIndex]?.getAttribute('data-email') || '';
+            const subject = document.getElementById('emailSubject').value.trim();
+            const message = document.getElementById('emailMessage').value.trim();
+            const type = document.getElementById('emailType').value;
+            
+            if (!studentId) {
+                showError('Please select a student');
+                return;
+            }
+            if (!parentEmail) {
+                showError('This student has no parent email registered');
+                return;
+            }
+            if (!subject || !message) {
+                showError('Please fill in subject and message');
+                return;
+            }
+            
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/send-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        to: parentEmail,
+                        subject: `[${type}] ${subject}`,
+                        message: message,
+                        student_name: studentName
+                    })
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess(`✅ Email sent to ${studentName}'s parent!`);
+                    loadHistory();
+                    updateStats();
+                    document.getElementById('emailSubject').value = '';
+                    document.getElementById('emailMessage').value = '';
+                } else {
+                    showError('❌ Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('❌ Error: ' + err.message);
+            }
+        }
+        
+        // Send email to all parents
+        async function sendEmailToAll() {
+            const subject = document.getElementById('allSubject').value.trim();
+            const message = document.getElementById('allMessage').value.trim();
+            
+            if (!subject || !message) {
+                showError('Please fill in subject and message');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to send this email to ALL parents?')) return;
+            
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/send-email-all`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        subject: subject,
+                        message: message
+                    })
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    showSuccess(data.message || '✅ Email sent to all parents!');
+                    loadHistory();
+                    updateStats();
+                    document.getElementById('allSubject').value = '';
+                    document.getElementById('allMessage').value = '';
+                    document.getElementById('previewBox').textContent = 'Your message will appear here...';
+                } else {
+                    showError('❌ Error: ' + data.message);
+                }
+            } catch(err) {
+                showError('❌ Error: ' + err.message);
+            }
+        }
+        
+        // Update live preview
+        document.getElementById('allMessage').addEventListener('input', function() {
+            document.getElementById('previewBox').textContent = this.value || 'Your message will appear here...';
+        });
+        
+        // Load email history
+        async function loadHistory() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/email-history`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await res.json();
+                const tbody = document.getElementById('historyTable');
+                
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999;">No email history found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                data.forEach(h => {
+                    const statusClass = h.status === 'Sent' ? 'badge-success' : 'badge-danger';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${h.date}</td>
+                            <td>${h.student}</td>
+                            <td>${h.type}</td>
+                            <td><span class="badge ${statusClass}">${h.status}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch(err) {
+                console.error('Error loading history:', err);
+                document.getElementById('historyTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#f44336;">Error loading history</td></tr>';
+            }
+        }
+        
+        // Update stats
+        async function updateStats() {
+            try {
+                const token = getToken();
+                const res = await fetch(`${API_URL}/email-stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await res.json();
+                if (data) {
+                    document.getElementById('sentToday').textContent = data.sentToday || 0;
+                    document.getElementById('totalParents').textContent = data.totalParents || 0;
+                    document.getElementById('successRate').textContent = (data.successRate || 0) + '%';
+                    document.getElementById('failedEmails').textContent = data.failedEmails || 0;
+                }
+            } catch(err) {
+                console.error('Error loading stats:', err);
+            }
+        }
+        
+        // Auto-refresh
+        setInterval(() => {
+            loadHistory();
+            updateStats();
+        }, 30000);
+        
+        window.onload = function() {
+            checkLogin();
+            loadStudents();
+            loadHistory();
+            updateStats();
+        };
+    </script>
+</body>
+</html>
